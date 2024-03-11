@@ -447,9 +447,11 @@ function App() {
     metrics: ["experimental_time_to_first_byte", "largest_contentful_paint"],
   };
 
+  const apiKey = "";
+
   const fetchCruxData = () => {
     fetch(
-      "https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=AIzaSyBJIzf5dT08r-Xz_o07KrmhRDJ7539Jk6s",
+      `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${apiKey}`,
       {
         method: "POST",
         headers: {
