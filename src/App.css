@@ -1,0 +1,19 @@
+.wrapper {
+  max-width: 600px;
+  overflow-x: scroll;
+  background-color: lightyellow;
+}
+table {
+  border-collapse: collapse; /* Merge adjacent borders */
+  width: 100%; /* Set table width */
+}
+th,
+td {
+  border: 1px solid black; /* Add a 1px solid black border to header cells and data cells */
+  padding: 8px; /* Add padding for cell content */
+  text-align: left; /* Align cell content to the left */
+}
+.col-1 {
+  background-color: lightgoldenrodyellow;
+  min-width: 170px;
+}
