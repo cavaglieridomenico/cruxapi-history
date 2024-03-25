@@ -1,7 +1,7 @@
 .wrapper {
-  max-width: 600px;
-  overflow-x: scroll;
-  background-color: lightyellow;
+  /* max-width: 600px; */
+  /* overflow-x: scroll; */
+  /* background-color: lightyellow; */
 }
 table {
   border-collapse: collapse; /* Merge adjacent borders */
@@ -15,5 +15,5 @@ td {
 }
 .col-1 {
   background-color: lightgoldenrodyellow;
-  min-width: 170px;
+  /* min-width: 170px; */
 }

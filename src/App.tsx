@@ -3,6 +3,10 @@ import TableHeaderCell from "./components/TableHeaderCell";
 import "./App.css";
 import DensityCell from "./components/DensityCell";
 import PercentileCell from "./components/PercentileCell";
+import { useFetch } from "./customHooks/useFetch";
+import PercentileRow from "./components/PercentileRow";
+import SingleUrlTable from "./components/SingleUrlTable";
+import { urlList } from "./utils/urlList";
 
 function App() {
   const [cruxData, setCruxData] = useState({
@@ -441,172 +445,33 @@ function App() {
   const cruxUrl9 =
     "https://www.whirlpool.it/prodotti/lavaggio-e-asciugatura/asciugatrici";
 
-  const body = {
-    url: cruxUrl4,
-    formFactor: "PHONE",
-    metrics: ["experimental_time_to_first_byte", "largest_contentful_paint"],
-  };
+  const apiKey = "AIzaSyBJIzf5dT08r-Xz_o07KrmhRDJ7539Jk6s";
 
-  const apiKey = "";
-
-  const fetchCruxData = () => {
-    fetch(
-      `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setCruxData(data);
-      });
-  };
-
-  useEffect(() => {
-    fetchCruxData();
-  }, []);
-  const record = cruxData.record;
+  const data: any = useFetch(cruxUrl1, apiKey);
+  console.log(data);
+  const record = data?.record;
   console.log(record);
+  const collectionPeriods: CollectionPeriod[] = data?.record?.collectionPeriods;
+  console.log(collectionPeriods);
+  const clsData: [] =
+    data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s;
+  const lcpData: [] =
+    data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries
+      ?.p75s;
+  const ttfbData: [] =
+    data?.record?.metrics?.experimental_time_to_first_byte
+      ?.percentilesTimeseries?.p75s;
 
   return (
     <>
       <h1>CrUX API history</h1>
-      <p>{record?.key?.url}</p>
-      <div className="wrapper">
-        <table>
-          <tr>
-            <th className="col-1">TTFB</th>
-            {record &&
-              record.collectionPeriods?.map((period, index) => (
-                <TableHeaderCell
-                  key={index}
-                  firstDate={period?.firstDate}
-                  lastDate={period?.lastDate}
-                />
-              ))}
-          </tr>
-          {record &&
-            record.metrics?.experimental_time_to_first_byte?.histogramTimeseries?.map(
-              (histogramTimeItem, index) => {
-                return histogramTimeItem.start === 0 ? (
-                  <tr>
-                    <td>
-                      <span>GOOD</span>
-                      <br />
-                      <span>0 ms - 800 ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem?.densities}
-                    />
-                  </tr>
-                ) : histogramTimeItem?.start === 800 ? (
-                  <tr>
-                    <td>
-                      <span>NEED IMPROVEMENT</span>
-                      <br />
-                      <span>800 ms - 1200 ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem.densities}
-                    />
-                  </tr>
-                ) : (
-                  <tr>
-                    <td>
-                      <p>POOR</p>
-                      <span>over 1200ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem?.densities}
-                    />
-                  </tr>
-                );
-              }
-            )}
-          <tr>
-            <td>PERCENTILE 75%</td>
-            {record &&
-              record.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.map(
-                (percentileItem) => {
-                  return <PercentileCell percentile={percentileItem} />;
-                }
-              )}
-          </tr>
-        </table>
-        <table>
-          <tr>
-            <th className="col-1">LCP</th>
-            {record &&
-              record.collectionPeriods?.map((period, index) => (
-                <TableHeaderCell
-                  key={index}
-                  firstDate={period?.firstDate}
-                  lastDate={period?.lastDate}
-                />
-              ))}
-          </tr>
-          {record &&
-            record.metrics?.largest_contentful_paint?.histogramTimeseries?.map(
-              (histogramTimeItem, index) => {
-                return histogramTimeItem.start === 0 ? (
-                  <tr>
-                    <td>
-                      <span>GOOD</span>
-                      <br />
-                      <span>0 ms - 2500 ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem?.densities}
-                    />
-                  </tr>
-                ) : histogramTimeItem?.start === 2500 ? (
-                  <tr>
-                    <td>
-                      <span>NEED IMPROVEMENT</span>
-                      <br />
-                      <span>2500 ms - 4000 ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem.densities}
-                    />
-                  </tr>
-                ) : (
-                  <tr>
-                    <td>
-                      <span>POOR</span>
-                      <br />
-                      <span>over 4000 ms</span>
-                    </td>
-                    <DensityCell
-                      key={index}
-                      densities={histogramTimeItem?.densities}
-                    />
-                  </tr>
-                );
-              }
-            )}
-          <tr>
-            <td>PERCENTILE 75%</td>
-            {record &&
-              record.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.map(
-                (percentileItem) => {
-                  return <PercentileCell percentile={percentileItem} />;
-                }
-              )}
-          </tr>
-        </table>
-      </div>
+      <SingleUrlTable
+        url={"https://www.bauknecht.de/hausgeraete"}
+        apiKey={apiKey}
+      />
+      {urlList.map((url) => (
+        <SingleUrlTable url={url} apiKey={apiKey} />
+      ))}
     </>
   );
 }
