@@ -1,4 +1,8 @@
+.input-api-key {
+  min-width: 300px;
+}
 .wrapper {
+  min-height: 195px;
   /* max-width: 600px; */
   /* overflow-x: scroll; */
   /* background-color: lightyellow; */

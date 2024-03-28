@@ -1,8 +1,10 @@
-type TableHeaderCellProps = CollectionPeriod;
-const TableHeaderCell = ({ firstDate, lastDate }: TableHeaderCellProps) => {
+const TableHeaderCell = (
+  { firstDate, lastDate }: CollectionPeriod,
+  keyProp: number
+) => {
   return (
     <>
-      <th>{`${firstDate.day}/${firstDate.month}/${firstDate.year}
+      <th key={keyProp}>{`${firstDate.day}/${firstDate.month}/${firstDate.year}
              ${lastDate.day}/${lastDate.month}/${lastDate.year}`}</th>
     </>
   );

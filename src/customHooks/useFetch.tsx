@@ -30,7 +30,7 @@ export const useFetch = (url: string, apiKey: string) => {
   };
 
   useEffect(() => {
-    fetchData();
+    setTimeout(() => fetchData(), 3500);
   }, [url]);
   return data;
 };

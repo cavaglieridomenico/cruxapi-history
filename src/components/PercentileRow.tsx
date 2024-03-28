@@ -9,8 +9,14 @@ const PercentileRow = ({ list, type }: PercentileRowProps) => {
   return (
     <tr>
       <td>{type.toUpperCase()}</td>
-      {list?.map((percentileItem) => {
-        return <PercentileCell percentile={percentileItem} type={type} />;
+      {list?.map((percentileItem, index) => {
+        return (
+          <PercentileCell
+            percentile={percentileItem}
+            type={type}
+            keyProp={index}
+          />
+        );
       })}
     </tr>
   );
