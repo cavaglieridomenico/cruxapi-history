@@ -11,10 +11,7 @@ import {
 } from "./utils/urlList";
 
 function App() {
-  const [apiKey, setApiKey] = useState("");
-  const [show, setShow] = useState(false);
   const [selectMarket, setSelectMarket] = useState("bk-de");
-
   const getMarkrtList = (market: string) => {
     switch (market) {
       case "bk-de":
@@ -38,17 +35,11 @@ function App() {
     <>
       <h1>CrUX History API</h1>
       <div>
-        <input
-          onChange={(e) => setApiKey(e.target.value)}
-          type="text"
-          placeholder="Google Api Key"
-          className="input-api-key"
-        />
         <select
+          className="select-market"
           value={selectMarket}
           onChange={(event) => {
             setSelectMarket(event.target.value);
-            setShow(false);
           }}
           style={{ margin: "0 .3rem" }}
         >
@@ -59,14 +50,12 @@ function App() {
           <option value="hp-it">HP IT</option>
           <option value="hp-uk">HP UK</option>
         </select>
-        <button disabled={apiKey === ""} onClick={() => setShow(true)}>
-          GO
-        </button>
       </div>
-      {show &&
-        getMarkrtList(selectMarket).map((url, index) => (
-          <SingleUrlTable url={url} apiKey={apiKey} keyProp={index + 1} />
-        ))}
+      {getMarkrtList(selectMarket).map((url, index) => (
+        <div key={index}>
+          <SingleUrlTable url={url} apiKey={import.meta.env.VITE_API_KEY} />
+        </div>
+      ))}
     </>
   );
 }

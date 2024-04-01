@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { CruxHistoryApi } from "../types/types";
 
 export const useFetch = (url: string, apiKey: string) => {
-  const [data, setData] = useState();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<CruxHistoryApi | undefined>();
+  const [error, setError] = useState<number>(0);
 
   const body = {
     url: url,
@@ -25,12 +28,19 @@ export const useFetch = (url: string, apiKey: string) => {
         body: JSON.stringify(body),
       }
     );
-    const data = await response.json();
-    setData(data);
+    if (response?.ok) {
+      const data = await response.json();
+      setData(data);
+      setLoading(false);
+    } else {
+      setError(response?.status);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
+    setLoading(true);
     setTimeout(() => fetchData(), 3500);
   }, [url]);
-  return data;
+  return { loading, data, error };
 };

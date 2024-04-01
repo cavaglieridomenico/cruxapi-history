@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
 import { useFetch } from "../customHooks/useFetch";
 import PercentileRow from "./PercentileRow";
-import TableHeaderCell from "./TableHeaderCell";
+import HeaderRow from "./HeaderRow";
+import { CollectionPeriodsEntity, FetchCruxHistoryApi } from "../types/types";
 
 type SinglrUrlTableProps = {
   url: string;
   apiKey: string;
-  keyProp: number;
 };
 
-const SingleUrlTable = ({ url, apiKey, keyProp }: SinglrUrlTableProps) => {
-  const [show, setShow] = useState(false);
-  const [collectionPeriods, setCollectionPeriod] = useState();
-  const [clsData, setClsData] = useState();
-  const [lcpData, setLcpData] = useState();
-  const [ttfbData, setTtfbData] = useState();
-  const data: any = useFetch(url, apiKey);
+const SingleUrlTable = ({ url, apiKey }: SinglrUrlTableProps) => {
+  const [collectionPeriods, setCollectionPeriod] = useState<
+    CollectionPeriodsEntity[] | null
+  >();
+  const [clsData, setClsData] = useState<string[] | null>();
+  const [lcpData, setLcpData] = useState<number[] | null>();
+  const [ttfbData, setTtfbData] = useState<number[] | null>();
+  const { loading, data, error }: FetchCruxHistoryApi = useFetch(url, apiKey);
 
   useEffect(() => {
     if (!data) return;
-    setCollectionPeriod(data?.record?.collectionPeriods.reverse());
+    setCollectionPeriod(data?.record?.collectionPeriods?.reverse());
     setClsData(
       data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
     );
@@ -29,35 +30,38 @@ const SingleUrlTable = ({ url, apiKey, keyProp }: SinglrUrlTableProps) => {
     setTtfbData(
       data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
     );
-    setShow(true);
   }, [data]);
 
   const record = data?.record;
   const responseUrl = record?.key?.url;
 
   return (
-    <div className="wrapper" key={keyProp}>
-      {!show && <p>Loading...</p>}
-      {show && (
+    <div className="single-url-table-wrapper">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
         <>
-          <p>{responseUrl ? responseUrl : `404 - ${url}`}</p>
+          <p>{error ? `Status: 404 - ${url}` : responseUrl}</p>
           <table>
             <thead>
-              <tr>
-                <th className="col-1">PERIODS</th>
-                {collectionPeriods?.map((period, index) => (
-                  <TableHeaderCell
-                    key={index}
-                    firstDate={period?.firstDate}
-                    lastDate={period?.lastDate}
-                  />
-                ))}
-              </tr>
+              <HeaderRow periodList={collectionPeriods} errorStatus={error} />
             </thead>
             <tbody>
-              <PercentileRow list={clsData} type="cls" />
-              <PercentileRow list={lcpData} type="lcp" />
-              <PercentileRow list={ttfbData} type="ttfb" />
+              <PercentileRow
+                percentileList={clsData}
+                errorStatus={error}
+                type="cls"
+              />
+              <PercentileRow
+                percentileList={lcpData}
+                type="lcp"
+                errorStatus={error}
+              />
+              <PercentileRow
+                percentileList={ttfbData}
+                type="ttfb"
+                errorStatus={error}
+              />
             </tbody>
           </table>
         </>

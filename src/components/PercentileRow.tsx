@@ -1,23 +1,40 @@
-import PercentileCell from "./PercentileCell";
+import ErrorCell from "./ErrorCell.";
 
 type PercentileRowProps = {
-  list: [];
+  percentileList: number[] | string[] | undefined | null;
   type: "cls" | "lcp" | "ttfb";
+  errorStatus: number;
 };
 
-const PercentileRow = ({ list, type }: PercentileRowProps) => {
+const PercentileRow = ({
+  percentileList,
+  type,
+  errorStatus,
+}: PercentileRowProps) => {
+  const unit = (type: string) => {
+    switch (type) {
+      case "cls":
+        return "";
+      case "lcp":
+        return "ms";
+      case "ttfb":
+        return "ms";
+    }
+  };
   return (
     <tr>
       <td>{type.toUpperCase()}</td>
-      {list?.map((percentileItem, index) => {
-        return (
-          <PercentileCell
-            percentile={percentileItem}
-            type={type}
-            keyProp={index}
-          />
-        );
-      })}
+      {errorStatus ? (
+        <ErrorCell errorStatus={errorStatus} />
+      ) : (
+        percentileList?.map((percentileItem, index) => {
+          return (
+            <td key={index}>{`${percentileItem}${
+              percentileItem ? unit(type) : ""
+            }`}</td>
+          );
+        })
+      )}
     </tr>
   );
 };

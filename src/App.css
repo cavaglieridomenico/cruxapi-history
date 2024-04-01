@@ -1,23 +1,21 @@
 .input-api-key {
   min-width: 300px;
 }
-.wrapper {
+.single-url-table-wrapper {
   min-height: 195px;
-  /* max-width: 600px; */
-  /* overflow-x: scroll; */
-  /* background-color: lightyellow; */
 }
 table {
-  border-collapse: collapse; /* Merge adjacent borders */
-  width: 100%; /* Set table width */
+  border-collapse: collapse;
 }
 th,
 td {
-  border: 1px solid black; /* Add a 1px solid black border to header cells and data cells */
-  padding: 8px; /* Add padding for cell content */
-  text-align: left; /* Align cell content to the left */
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
 }
 .col-1 {
   background-color: lightgoldenrodyellow;
-  /* min-width: 170px; */
+}
+select.select-market {
+  font-size: 20px;
 }
