@@ -1,7 +1,7 @@
 type ErrorCellProps = {
   errorStatus: number;
 };
-const ErrorCell = (errorStatus: ErrorCellProps) => {
+const ErrorCell = ({ errorStatus }: ErrorCellProps) => {
   return <td>{`Status: ${errorStatus}`}</td>;
 };
 
