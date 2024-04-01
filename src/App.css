@@ -1,21 +1,48 @@
-.input-api-key {
-  min-width: 300px;
-}
 .single-url-table-wrapper {
+  min-width: calc(100vw);
   min-height: 195px;
+  margin: 1rem 0 3rem;
+  background-color: #f5f5f5;
+  padding-top: 0.2rem;
+  width: fit-content;
+  @media (max-width: 640px) {
+    min-width: 1200px;
+  }
 }
+
 table {
   border-collapse: collapse;
 }
+
 th,
 td {
   border: 1px solid black;
   padding: 8px;
   text-align: left;
 }
-.col-1 {
+
+th {
+  height: 55px;
+}
+
+.header-first-cell {
   background-color: lightgoldenrodyellow;
 }
+
 select.select-market {
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f5f5f5 10%, #ddd 35%, #f5f5f5 75%);
+  animation: shimmer 0.8s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
 }

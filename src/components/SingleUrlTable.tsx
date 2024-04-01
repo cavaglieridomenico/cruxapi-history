@@ -36,9 +36,9 @@ const SingleUrlTable = ({ url, apiKey }: SinglrUrlTableProps) => {
   const responseUrl = record?.key?.url;
 
   return (
-    <div className="single-url-table-wrapper">
+    <div className={`single-url-table-wrapper ${loading ? "skeleton" : ""}`}>
       {loading ? (
-        <p>Loading...</p>
+        <></>
       ) : (
         <>
           <p>{error ? `Status: 404 - ${url}` : responseUrl}</p>

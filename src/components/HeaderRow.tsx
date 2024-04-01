@@ -9,7 +9,7 @@ type HeaderRowProps = {
 const HeaderRow = ({ periodList, errorStatus }: HeaderRowProps) => {
   return (
     <tr>
-      <td>PERIODS</td>
+      <th className="header-first-cell">PERIODS</th>
       {errorStatus ? (
         <ErrorCell errorStatus={errorStatus} />
       ) : (
