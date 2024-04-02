@@ -43,12 +43,12 @@ function App() {
           }}
           style={{ margin: "0 .3rem" }}
         >
-          <option value="bk-de">BK DE</option>
-          <option value="wp-it">WP IT</option>
-          <option value="wp-pl">WP PL</option>
-          <option value="wp-fr">WP FR</option>
-          <option value="hp-it">HP IT</option>
-          <option value="hp-uk">HP UK</option>
+          <option value="bk-de">BK DE - mobile</option>
+          <option value="wp-it">WP IT - mobile</option>
+          <option value="wp-pl">WP PL - mobile</option>
+          <option value="wp-fr">WP FR - mobile</option>
+          <option value="hp-it">HP IT - mobile</option>
+          <option value="hp-uk">HP UK - mobile</option>
         </select>
       </div>
       {getMarkrtList(selectMarket).map((url, index) => (
