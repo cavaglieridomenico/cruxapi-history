@@ -3,7 +3,7 @@ import ErrorCell from "./ErrorCell.";
 type PercentileRowProps = {
   percentileList: number[] | string[] | undefined | null;
   type: "cls" | "lcp" | "ttfb";
-  errorStatus: number;
+  errorStatus: string | undefined;
 };
 
 const PercentileRow = ({
@@ -23,7 +23,9 @@ const PercentileRow = ({
   };
   return (
     <tr>
-      <td>{type.toUpperCase()}</td>
+      <td>
+        <b>{type.toUpperCase()}</b>
+      </td>
       {errorStatus ? (
         <ErrorCell errorStatus={errorStatus} />
       ) : (

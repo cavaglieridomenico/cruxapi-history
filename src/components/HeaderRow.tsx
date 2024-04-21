@@ -3,7 +3,7 @@ import ErrorCell from "./ErrorCell.";
 
 type HeaderRowProps = {
   periodList: CollectionPeriodsEntity[] | null | undefined;
-  errorStatus: number;
+  errorStatus: string | undefined;
 };
 
 const HeaderRow = ({ periodList, errorStatus }: HeaderRowProps) => {

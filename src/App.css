@@ -29,7 +29,7 @@ th {
   background-color: lightgoldenrodyellow;
 }
 
-select.select-market {
+select.select {
   font-size: 16px;
 }
 
@@ -45,4 +45,8 @@ select.select-market {
   100% {
     background-position: 200px 0;
   }
+}
+
+.loader {
+  height: 1.2rem;
 }

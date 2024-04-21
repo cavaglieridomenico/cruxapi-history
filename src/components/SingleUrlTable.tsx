@@ -6,17 +6,29 @@ import { CollectionPeriodsEntity, FetchCruxHistoryApi } from "../types/types";
 
 type SinglrUrlTableProps = {
   url: string;
+  formFactor: string;
   apiKey: string;
+  listIndex: number;
 };
 
-const SingleUrlTable = ({ url, apiKey }: SinglrUrlTableProps) => {
+const SingleUrlTable = ({
+  url,
+  formFactor,
+  apiKey,
+  listIndex,
+}: SinglrUrlTableProps) => {
   const [collectionPeriods, setCollectionPeriod] = useState<
     CollectionPeriodsEntity[] | null
   >();
   const [clsData, setClsData] = useState<string[] | null>();
   const [lcpData, setLcpData] = useState<number[] | null>();
   const [ttfbData, setTtfbData] = useState<number[] | null>();
-  const { loading, data, error }: FetchCruxHistoryApi = useFetch(url, apiKey);
+  const { loading, data, error }: FetchCruxHistoryApi = useFetch(
+    url,
+    formFactor,
+    apiKey,
+    listIndex
+  );
 
   useEffect(() => {
     if (!data) return;
@@ -33,6 +45,7 @@ const SingleUrlTable = ({ url, apiKey }: SinglrUrlTableProps) => {
   }, [data]);
 
   const record = data?.record;
+  const responseFormFactor = record?.key?.formFactor;
   const responseUrl = record?.key?.url;
 
   return (
@@ -41,26 +54,37 @@ const SingleUrlTable = ({ url, apiKey }: SinglrUrlTableProps) => {
         <></>
       ) : (
         <>
-          <p>{error ? `Status: 404 - ${url}` : responseUrl}</p>
+          <p>
+            {error
+              ? `${listIndex + 1} - ${
+                  formFactor === "PHONE" ? "MOBILE" : formFactor
+                } - ${url}`
+              : `${listIndex + 1} - ${
+                  responseFormFactor === "PHONE" ? "MOBILE" : responseFormFactor
+                } - ${responseUrl}`}
+          </p>
           <table>
             <thead>
-              <HeaderRow periodList={collectionPeriods} errorStatus={error} />
+              <HeaderRow
+                periodList={collectionPeriods}
+                errorStatus={error?.code}
+              />
             </thead>
             <tbody>
               <PercentileRow
                 percentileList={clsData}
-                errorStatus={error}
+                errorStatus={error?.message}
                 type="cls"
               />
               <PercentileRow
                 percentileList={lcpData}
                 type="lcp"
-                errorStatus={error}
+                errorStatus={error?.message}
               />
               <PercentileRow
                 percentileList={ttfbData}
                 type="ttfb"
-                errorStatus={error}
+                errorStatus={error?.message}
               />
             </tbody>
           </table>

@@ -1,7 +1,7 @@
 export interface FetchCruxHistoryApi {
   loading: boolean;
   data: CruxHistoryApi | undefined;
-  error: number;
+  error: ErrorApi | undefined;
 }
 
 export interface CruxHistoryApi {
@@ -58,4 +58,8 @@ export interface FirstDateOrLastDate {
 export interface UrlNormalizationDetails {
   originalUrl: string;
   normalizedUrl: string;
+}
+export interface ErrorApi {
+  code: string;
+  message: string;
 }

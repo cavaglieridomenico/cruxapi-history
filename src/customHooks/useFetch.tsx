@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
-import { CruxHistoryApi } from "../types/types";
+import { CruxHistoryApi, ErrorApi } from "../types/types";
 
-export const useFetch = (url: string, apiKey: string) => {
+export const useFetch = (
+  url: string,
+  formFactor: string,
+  apiKey: string,
+  timeout: number
+) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<CruxHistoryApi | undefined>();
-  const [error, setError] = useState<number>(0);
+  const [error, setError] = useState<ErrorApi>();
 
   const body = {
     url: url,
-    formFactor: "PHONE",
+    formFactor: formFactor,
     metrics: [
       "experimental_time_to_first_byte",
       "largest_contentful_paint",
@@ -28,19 +33,19 @@ export const useFetch = (url: string, apiKey: string) => {
         body: JSON.stringify(body),
       }
     );
-    if (response?.ok) {
-      const data = await response.json();
-      setData(data);
-      setLoading(false);
-    } else {
-      setError(response?.status);
+    const data = await response.json();
+    if (data?.error) {
+      setError({ code: data?.error?.code, message: data?.error?.message });
       setLoading(false);
     }
+    setData(data);
+    setLoading(false);
   };
 
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => fetchData(), 3500);
-  }, [url]);
+    const fetchApi = setTimeout(() => fetchData(), timeout * 100);
+    return () => clearTimeout(fetchApi);
+  }, [url, formFactor]);
   return { loading, data, error };
 };
