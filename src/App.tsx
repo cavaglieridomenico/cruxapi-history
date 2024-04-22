@@ -29,7 +29,7 @@ function App() {
       <div className={`loader ${disabled ? "skeleton" : ""}`}></div>
       <h1>CrUX History API</h1>
       <p>
-        Weekly historical data is released every Mnday, containing the 25 most
+        Weekly historical data is released every Monday, containing the 25 most
         recent 28 day collection periods that end on Saturdays.
       </p>
       <div>
