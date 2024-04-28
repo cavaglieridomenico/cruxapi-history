@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getMarkrtList } from "./utils/utils";
-import { urlListWpitPdp } from "./utils/urlList";
+import { urlListHomepages } from "./utils/urlList";
 
 function App() {
-  const [selectMarket, setSelectMarket] = useState("wp-it");
+  const [selectMarket, setSelectMarket] = useState("homepages");
   const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
-  const [selectMarketList, setSelectMarketList] = useState(urlListWpitPdp);
+  const [selectMarketList, setSelectMarketList] = useState(urlListHomepages);
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
@@ -42,12 +42,19 @@ function App() {
           }}
           style={{ margin: "0 .3rem" }}
         >
-          <option value="wp-it">WP IT - PDP</option>
-          <option value="wp-pl">WP PL - PDP</option>
-          <option value="wp-fr">WP FR - PDP</option>
-          <option value="bk-de">BK DE - PDP</option>
-          <option value="hp-it">HP IT - PDP</option>
-          <option value="hp-uk">HP UK - PDP</option>
+          <option value="homapages">Homepages</option>
+          <option value="wp-it-plp">WP IT - PLP</option>
+          <option value="wp-it-pdp">WP IT - PDP</option>
+          <option value="wp-pl-plp">WP PL - PLP</option>
+          <option value="wp-pl-pdp">WP PL - PDP</option>
+          <option value="wp-fr-plp">WP FR - PLP</option>
+          <option value="wp-fr-pdp">WP FR - PDP</option>
+          <option value="bk-de-plp">BK DE - PLP</option>
+          <option value="bk-de-pdp">BK DE - PDP</option>
+          <option value="hp-it-plp">HP IT - PLP</option>
+          <option value="hp-it-pdp">HP IT - PDP</option>
+          <option value="hp-uk-plp">HP UK - PLP</option>
+          <option value="hp-uk-pdp">HP UK - PDP</option>
         </select>
         <select
           className="select"

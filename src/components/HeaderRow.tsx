@@ -14,10 +14,9 @@ const HeaderRow = ({ periodList, errorStatus }: HeaderRowProps) => {
         <ErrorCell errorStatus={errorStatus} />
       ) : (
         periodList?.map((period, index) => (
-          <th
-            key={index}
-          >{`${period?.firstDate?.day}/${period?.firstDate?.month}/${period?.firstDate?.year} 
-          ${period?.lastDate?.day}/${period?.lastDate?.month}/${period?.lastDate?.year}`}</th>
+          <th key={index}>{` 
+          ${period?.lastDate?.day}/${period?.lastDate?.month}/${period?.lastDate?.year}
+          ${period?.firstDate?.day}/${period?.firstDate?.month}/${period?.firstDate?.year}`}</th>
         ))
       )}
     </tr>
