@@ -56,10 +56,10 @@ const SingleUrlTable = ({
         <>
           <p>
             {error
-              ? `${listIndex + 1} - ${
+              ? `${listIndex + 1} - CrUX History - ${
                   formFactor === "PHONE" ? "MOBILE" : formFactor
                 } - ${url}`
-              : `${listIndex + 1} - ${
+              : `${listIndex + 1} - CrUX History - ${
                   responseFormFactor === "PHONE" ? "MOBILE" : responseFormFactor
                 } - ${responseUrl}`}
           </p>

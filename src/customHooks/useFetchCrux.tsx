@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { CruxHistoryApi, ErrorApi } from "../types/types";
+import { CruxApi, ErrorApi } from "../types/types";
 
-export const useFetch = (
+export const useFetchCrux = (
   url: string,
   formFactor: string,
   apiKey: string,
   timeout: number
 ) => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<CruxHistoryApi | undefined>();
+  const [data, setData] = useState<CruxApi | undefined>();
   const [error, setError] = useState<ErrorApi>();
 
   const body = {
@@ -21,10 +21,10 @@ export const useFetch = (
     ],
   };
 
-  const urlCruxHistory = `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${apiKey}`;
+  const urlCrux = `https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${apiKey}`;
 
   const fetchData = async () => {
-    const response = await fetch(urlCruxHistory, {
+    const response = await fetch(urlCrux, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +39,7 @@ export const useFetch = (
     }
     setData(data);
     setLoading(false);
+    console.log(data);
   };
 
   useEffect(() => {

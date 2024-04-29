@@ -3,6 +3,7 @@ import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getMarkrtList } from "./utils/utils";
 import { urlListHomepages } from "./utils/urlList";
+import SingleUrlDaily from "./components/SingleUrlDaily";
 
 function App() {
   const [selectMarket, setSelectMarket] = useState("homepages");
@@ -29,8 +30,13 @@ function App() {
       <div className={`loader ${disabled ? "skeleton" : ""}`}></div>
       <h1>CrUX History API</h1>
       <p>
-        Weekly historical data is released every Monday, containing the 25 most
-        recent 28 day collection periods that end on Saturdays.
+        CrUX History: Weekly historical data is released every Monday,
+        containing the 25 most recent 28 day collection periods that end on
+        Saturdays.
+      </p>
+      <p>
+        CrUX Daily Average: 28-day rolling average data is updated daily, based
+        on the aggregated data from the previous 28 days.
       </p>
       <div>
         <select
@@ -70,12 +76,19 @@ function App() {
         </select>
       </div>
       {selectMarketList.map((url, index) => (
-        <div key={index}>
+        <div className="url-table-wrapper" key={index}>
           <SingleUrlTable
             url={url}
             formFactor={selectFormFactor}
             apiKey={import.meta.env.VITE_API_KEY}
             listIndex={index}
+          />
+          <SingleUrlDaily
+            url={url}
+            formFactor={selectFormFactor}
+            apiKey={import.meta.env.VITE_API_KEY}
+            listIndex={index}
+            history={false}
           />
         </div>
       ))}
