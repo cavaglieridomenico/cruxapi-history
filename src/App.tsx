@@ -77,18 +77,18 @@ function App() {
       </div>
       {selectMarketList.map((url, index) => (
         <div className="url-table-wrapper" key={index}>
-          <SingleUrlTable
-            url={url}
-            formFactor={selectFormFactor}
-            apiKey={import.meta.env.VITE_API_KEY}
-            listIndex={index}
-          />
           <SingleUrlDaily
             url={url}
             formFactor={selectFormFactor}
             apiKey={import.meta.env.VITE_API_KEY}
             listIndex={index}
             history={false}
+          />
+          <SingleUrlTable
+            url={url}
+            formFactor={selectFormFactor}
+            apiKey={import.meta.env.VITE_API_KEY}
+            listIndex={index}
           />
         </div>
       ))}

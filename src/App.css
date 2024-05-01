@@ -1,18 +1,3 @@
-.url-table-wrapper {
-  margin: 1rem 0 3rem;
-}
-
-.single-url-table-wrapper {
-  min-width: calc(100vw);
-  min-height: 195px;
-  background-color: #f3f0f0;
-  padding-top: 0.2rem;
-  width: fit-content;
-  @media (max-width: 640px) {
-    min-width: 1200px;
-  }
-}
-
 table {
   border-collapse: collapse;
 }
@@ -26,14 +11,30 @@ td {
 
 th {
   height: 55px;
-}
-
-.header-first-cell {
   background-color: lightgoldenrodyellow;
 }
 
+.url-table-wrapper {
+  width: fit-content;
+  margin: 1rem 0 3rem;
+  background-color: #f3f0f0;
+}
+
+.single-url-table-wrapper {
+  min-width: calc(100vw);
+  min-height: 195px;
+  padding-top: 0.2rem;
+  @media (max-width: 640px) {
+    min-width: 1200px;
+  }
+}
+
+.single-url-table-wrapper.single-url-table-wrapper.daily-table-wrapper {
+  margin-bottom: 1.75rem;
+}
+
 .header-cell-daily {
-  max-width: 5rem;
+  width: 4rem;
 }
 
 select.select {

@@ -39,7 +39,11 @@ const SingleUrlDaily = ({
   console.log("period", period);
 
   return (
-    <div className={`single-url-table-wrapper ${loading ? "skeleton" : ""}`}>
+    <div
+      className={`single-url-table-wrapper daily-table-wrapper ${
+        loading ? "skeleton" : ""
+      }`}
+    >
       {loading ? (
         <></>
       ) : (
@@ -56,7 +60,7 @@ const SingleUrlDaily = ({
           <table>
             <thead>
               <tr>
-                <th className="header-first-cell">PERIODS</th>
+                <th>PERIODS</th>
                 {error ? (
                   <ErrorCell errorStatus={error.code} />
                 ) : (
@@ -84,7 +88,10 @@ const SingleUrlDaily = ({
                 {error ? (
                   <ErrorCell errorStatus={error.message} />
                 ) : (
-                  <td>{lcpPercentile}ms</td>
+                  <td>
+                    {lcpPercentile}
+                    {lcpPercentile ? "ms" : ""}
+                  </td>
                 )}
               </tr>
               <tr>
@@ -94,7 +101,10 @@ const SingleUrlDaily = ({
                 {error ? (
                   <ErrorCell errorStatus={error.message} />
                 ) : (
-                  <td>{ttfbPercentile}ms</td>
+                  <td>
+                    {ttfbPercentile}
+                    {ttfbPercentile ? "ms" : ""}
+                  </td>
                 )}
               </tr>
             </tbody>
