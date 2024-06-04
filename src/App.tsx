@@ -1,29 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, FormEvent } from "react";
 import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
-import { getMarkrtList } from "./utils/utils";
-import { urlListHomepages } from "./utils/urlList";
+import { getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
 
 function App() {
   const [selectMarket, setSelectMarket] = useState("homepages");
-  const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
-  const [selectMarketList, setSelectMarketList] = useState(urlListHomepages);
+  const [selectMarketList, setSelectMarketList] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
+  const [updateUrls, setUpdateUrls] = useState(false);
+  const [render, setRender] = useState(false);
 
+  const selectFormFactor = useRef<HTMLSelectElement>(null!);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setUpdateUrls(true);
+    setRender(true);
+  };
   useEffect(() => {
-    setSelectMarketList([]);
+    if (!updateUrls) return;
     setDisabled(true);
-    const setSelectDisabled = setTimeout(() => setDisabled(false), 6000);
-    const generateUrlList = setTimeout(
-      () => setSelectMarketList(getMarkrtList(selectMarket)),
-      1000
-    );
+    const setSelectDisabled = setTimeout(() => {
+      setDisabled(false);
+      setUpdateUrls(false);
+    }, 6000);
+    setSelectMarketList(getMarketList(selectMarket));
+    setRender(true);
+
     return () => {
-      clearTimeout(generateUrlList);
       clearTimeout(setSelectDisabled);
     };
-  }, [selectMarket, selectFormFactor]);
+  }, [updateUrls]);
 
   return (
     <>
@@ -38,7 +46,7 @@ function App() {
         CrUX Daily Average: 28-day rolling average data is updated daily, based
         on the aggregated data from the previous 28 days.
       </p>
-      <div>
+      <form onSubmit={(event) => handleSubmit(event)}>
         <select
           className="select"
           value={selectMarket}
@@ -63,35 +71,34 @@ function App() {
           <option value="hp-uk-pdp">HP UK - PDP</option>
         </select>
         <select
+          ref={selectFormFactor}
           className="select"
-          value={selectFormFactor}
           disabled={disabled}
-          onChange={(event) => {
-            setSelectFormFactor(event.target.value);
-          }}
           style={{ margin: "0 .3rem" }}
         >
           <option value="PHONE">MOBILE</option>
           <option value="DESKTOP">DESKTOP</option>
         </select>
-      </div>
-      {selectMarketList.map((url, index) => (
-        <div className="url-table-wrapper" key={index}>
-          <SingleUrlDaily
-            url={url}
-            formFactor={selectFormFactor}
-            apiKey={import.meta.env.VITE_API_KEY}
-            listIndex={index}
-            history={false}
-          />
-          <SingleUrlTable
-            url={url}
-            formFactor={selectFormFactor}
-            apiKey={import.meta.env.VITE_API_KEY}
-            listIndex={index}
-          />
-        </div>
-      ))}
+        <input type="submit" disabled={disabled} value="SEND" />
+      </form>
+      {render &&
+        selectMarketList.map((url, index) => (
+          <div className="url-table-wrapper" key={index}>
+            <SingleUrlDaily
+              url={url}
+              formFactor={selectFormFactor.current.value}
+              apiKey={import.meta.env.VITE_API_KEY}
+              listIndex={index}
+              history={false}
+            />
+            <SingleUrlTable
+              url={url}
+              formFactor={selectFormFactor.current.value}
+              apiKey={import.meta.env.VITE_API_KEY}
+              listIndex={index}
+            />
+          </div>
+        ))}
     </>
   );
 }

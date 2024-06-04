@@ -14,7 +14,7 @@ import {
   urlListHomepages,
 } from "./urlList";
 
-export const getMarkrtList = (market: string) => {
+export const getMarketList = (market: string) => {
   switch (market) {
     case "homepages":
       return urlListHomepages;
@@ -43,6 +43,6 @@ export const getMarkrtList = (market: string) => {
     case "hp-uk-plp":
       return urlListHpukPlp;
     default:
-      return urlListWpitPdp;
+      return [];
   }
 };
