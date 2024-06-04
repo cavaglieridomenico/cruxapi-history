@@ -20,6 +20,7 @@ function App() {
   };
   useEffect(() => {
     if (!updateUrls) return;
+    setSelectMarketList([]);
     setDisabled(true);
     const setSelectDisabled = setTimeout(() => {
       setDisabled(false);
