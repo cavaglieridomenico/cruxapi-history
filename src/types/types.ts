@@ -17,6 +17,7 @@ export interface Metrics {
   largest_contentful_paint: LargestContentfulPaintOrExperimentalTimeToFirstByte;
   cumulative_layout_shift: CumulativeLayoutShift;
   experimental_time_to_first_byte: LargestContentfulPaintOrExperimentalTimeToFirstByte;
+  interaction_to_next_paint: LargestContentfulPaintOrExperimentalTimeToFirstByte;
 }
 export interface LargestContentfulPaintOrExperimentalTimeToFirstByte {
   histogram?: HistogramEntity | null;
@@ -59,6 +60,7 @@ export interface MetricsHistory {
   largest_contentful_paint: LargestContentfulPaintOrExperimentalTimeToFirstByteHistory;
   cumulative_layout_shift: CumulativeLayoutShiftHistory;
   experimental_time_to_first_byte: LargestContentfulPaintOrExperimentalTimeToFirstByteHistory;
+  interaction_to_next_paint: LargestContentfulPaintOrExperimentalTimeToFirstByteHistory;
 }
 export interface LargestContentfulPaintOrExperimentalTimeToFirstByteHistory {
   histogramTimeseries?: HistogramTimeseriesEntityHistory[] | null;

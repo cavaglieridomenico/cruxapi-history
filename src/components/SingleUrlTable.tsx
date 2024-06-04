@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetch } from "../customHooks/useFetch";
+import { useFetchCruxHistory } from "../customHooks/useFetchCruxHistory";
 import PercentileRow from "./PercentileRow";
 import HeaderRow from "./HeaderRow";
 import { CollectionPeriodsEntity, FetchCruxHistoryApi } from "../types/types";
@@ -23,7 +23,8 @@ const SingleUrlTable = ({
   const [clsData, setClsData] = useState<string[] | null>();
   const [lcpData, setLcpData] = useState<number[] | null>();
   const [ttfbData, setTtfbData] = useState<number[] | null>();
-  const { loading, data, error }: FetchCruxHistoryApi = useFetch(
+  const [inpData, setInpData] = useState<number[] | null>();
+  const { loading, data, error }: FetchCruxHistoryApi = useFetchCruxHistory(
     url,
     formFactor,
     apiKey,
@@ -41,6 +42,9 @@ const SingleUrlTable = ({
     );
     setTtfbData(
       data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
+    );
+    setInpData(
+      data?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()
     );
   }, [data]);
 
@@ -84,6 +88,11 @@ const SingleUrlTable = ({
               <PercentileRow
                 percentileList={ttfbData}
                 type="ttfb"
+                errorStatus={error?.message}
+              />
+              <PercentileRow
+                percentileList={inpData}
+                type="inp"
                 errorStatus={error?.message}
               />
             </tbody>

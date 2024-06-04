@@ -33,10 +33,8 @@ const SingleUrlDaily = ({
     record?.metrics?.largest_contentful_paint?.percentiles?.p75;
   const ttfbPercentile =
     record?.metrics?.experimental_time_to_first_byte?.percentiles?.p75;
-
-  console.log("data:", data);
-  console.log("record", record);
-  console.log("period", period);
+  const inpPercentile =
+    record?.metrics?.interaction_to_next_paint?.percentiles?.p75;
 
   return (
     <div
@@ -104,6 +102,19 @@ const SingleUrlDaily = ({
                   <td>
                     {ttfbPercentile}
                     {ttfbPercentile ? "ms" : ""}
+                  </td>
+                )}
+              </tr>
+              <tr>
+                <td>
+                  <b>INP</b>
+                </td>
+                {error ? (
+                  <ErrorCell errorStatus={error.message} />
+                ) : (
+                  <td>
+                    {inpPercentile}
+                    {inpPercentile ? "ms" : ""}
                   </td>
                 )}
               </tr>

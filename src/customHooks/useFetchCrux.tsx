@@ -18,6 +18,7 @@ export const useFetchCrux = (
       "experimental_time_to_first_byte",
       "largest_contentful_paint",
       "cumulative_layout_shift",
+      "interaction_to_next_paint",
     ],
   };
 
@@ -39,7 +40,6 @@ export const useFetchCrux = (
     }
     setData(data);
     setLoading(false);
-    console.log(data);
   };
 
   useEffect(() => {

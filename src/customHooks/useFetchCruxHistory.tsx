@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CruxHistoryApi, ErrorApi } from "../types/types";
 
-export const useFetch = (
+export const useFetchCruxHistory = (
   url: string,
   formFactor: string,
   apiKey: string,
@@ -18,6 +18,7 @@ export const useFetch = (
       "experimental_time_to_first_byte",
       "largest_contentful_paint",
       "cumulative_layout_shift",
+      "interaction_to_next_paint",
     ],
   };
 

@@ -2,7 +2,7 @@ import ErrorCell from "./ErrorCell.";
 
 type PercentileRowProps = {
   percentileList: number[] | string[] | undefined | null;
-  type: "cls" | "lcp" | "ttfb";
+  type: "cls" | "lcp" | "ttfb" | "inp";
   errorStatus: string | undefined;
 };
 
@@ -18,6 +18,8 @@ const PercentileRow = ({
       case "lcp":
         return "ms";
       case "ttfb":
+        return "ms";
+      case "inp":
         return "ms";
     }
   };
