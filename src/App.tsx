@@ -3,6 +3,7 @@ import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
+import SingleUrlTableValuesOnly from "./components/SingleUrlTableValuesOnly";
 
 function App() {
   const [selectMarket, setSelectMarket] = useState("homepages");
@@ -16,7 +17,6 @@ function App() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUpdateUrls(true);
-    setRender(true);
   };
   useEffect(() => {
     if (!updateUrls) return;
@@ -53,6 +53,7 @@ function App() {
           value={selectMarket}
           disabled={disabled}
           onChange={(event) => {
+            console.log("Change!");
             setSelectMarket(event.target.value);
           }}
           style={{ margin: "0 .3rem" }}
@@ -82,7 +83,7 @@ function App() {
         </select>
         <input type="submit" disabled={disabled} value="SEND" />
       </form>
-      {render &&
+      {/* {render &&
         selectMarketList.map((url, index) => (
           <div className="url-table-wrapper" key={index}>
             <SingleUrlDaily
@@ -99,6 +100,16 @@ function App() {
               listIndex={index}
             />
           </div>
+        ))}
+      <hr /> */}
+      {render &&
+        selectMarketList.map((url, index) => (
+          <SingleUrlTableValuesOnly
+            url={url}
+            formFactor={selectFormFactor.current.value}
+            apiKey={import.meta.env.VITE_API_KEY}
+            listIndex={index}
+          />
         ))}
     </>
   );
