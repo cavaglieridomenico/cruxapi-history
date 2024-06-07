@@ -46,3 +46,11 @@ export const getMarketList = (market: string) => {
       return [];
   }
 };
+
+export const getDisableTime = (selectItem: string): number => {
+  return selectItem.includes("home")
+    ? 2000
+    : selectItem.includes("plp")
+    ? 3000
+    : 6000;
+};

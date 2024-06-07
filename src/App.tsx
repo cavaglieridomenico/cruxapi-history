@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
 import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
-import { getMarketList } from "./utils/utils";
+import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
 import SingleUrlTableValuesOnly from "./components/SingleUrlTableValuesOnly";
 
 function App() {
-  const [selectMarket, setSelectMarket] = useState("homepages");
   const [selectMarketList, setSelectMarketList] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
   const [updateUrls, setUpdateUrls] = useState(false);
   const [render, setRender] = useState(false);
 
+  const selectMarket = useRef<HTMLSelectElement>(null!);
   const selectFormFactor = useRef<HTMLSelectElement>(null!);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -25,12 +25,15 @@ function App() {
     const setSelectDisabled = setTimeout(() => {
       setDisabled(false);
       setUpdateUrls(false);
-    }, 6000);
-    setSelectMarketList(getMarketList(selectMarket));
-    setRender(true);
+    }, getDisableTime(selectMarket.current.value));
+    const setNewMarketList = setTimeout(
+      () => setSelectMarketList(getMarketList(selectMarket.current.value)),
+      1000
+    );
 
     return () => {
       clearTimeout(setSelectDisabled);
+      clearTimeout(setNewMarketList);
     };
   }, [updateUrls]);
 
@@ -49,16 +52,12 @@ function App() {
       </p>
       <form onSubmit={(event) => handleSubmit(event)}>
         <select
+          ref={selectMarket}
           className="select"
-          value={selectMarket}
           disabled={disabled}
-          onChange={(event) => {
-            console.log("Change!");
-            setSelectMarket(event.target.value);
-          }}
           style={{ margin: "0 .3rem" }}
         >
-          <option value="homapages">Homepages</option>
+          <option value="homepages">Homepages</option>
           <option value="wp-it-plp">WP IT - PLP</option>
           <option value="wp-it-pdp">WP IT - PDP</option>
           <option value="wp-pl-plp">WP PL - PLP</option>
