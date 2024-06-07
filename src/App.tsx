@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
 import "./App.css";
-import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
-import SingleUrlDaily from "./components/SingleUrlDaily";
 import SingleUrlTableValuesOnly from "./components/SingleUrlTableValuesOnly";
 
 function App() {
@@ -17,6 +15,7 @@ function App() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUpdateUrls(true);
+    setRender(true);
   };
   useEffect(() => {
     if (!updateUrls) return;
