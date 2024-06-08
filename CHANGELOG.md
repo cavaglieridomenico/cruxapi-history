@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.0.1] - 2024-06-08
+## [0.0.2] - 2024-06-08
+
+### Added
+
+- Add INP CrUX data
+- Add send to show data
+
+## [0.0.1] - 2024-05-02
 
 ### Added
 
