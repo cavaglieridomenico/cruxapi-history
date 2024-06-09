@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
 import "./App.css";
 import { getDisableTime, getMarketList } from "./utils/utils";
-import SingleUrlTableValuesOnly from "./components/SingleUrlTableValuesOnly";
+import SingleUrlTableValuesOnly from "./components/SingleUrlOnlyTableOneValue";
+import SingleUrlDaily from "./components/SingleUrlDaily";
+import SingleUrlTable from "./components/SingleUrlTable";
 
 function App() {
   const [selectMarketList, setSelectMarketList] = useState<string[]>([]);
@@ -11,6 +13,7 @@ function App() {
 
   const selectMarket = useRef<HTMLSelectElement>(null!);
   const selectFormFactor = useRef<HTMLSelectElement>(null!);
+  const selectMetrics = useRef<HTMLSelectElement>(null!);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +52,10 @@ function App() {
         CrUX Daily Average: 28-day rolling average data is updated daily, based
         on the aggregated data from the previous 28 days.
       </p>
-      <form onSubmit={(event) => handleSubmit(event)}>
+      <form
+        onSubmit={(event) => handleSubmit(event)}
+        className="form-container"
+      >
         <select
           ref={selectMarket}
           className="select"
@@ -79,9 +85,22 @@ function App() {
           <option value="PHONE">MOBILE</option>
           <option value="DESKTOP">DESKTOP</option>
         </select>
+        <select
+          ref={selectMetrics}
+          className="select"
+          disabled={disabled}
+          style={{ margin: "0 .3rem" }}
+        >
+          <option value="cwv">CWV</option>
+          <option value="cls">CLS</option>
+          <option value="lcp">LCP</option>
+          <option value="ttfb">TTFB</option>
+          <option value="inp">INP</option>
+        </select>
         <input type="submit" disabled={disabled} value="SEND" />
       </form>
-      {/* {render &&
+      {render &&
+        selectMetrics.current.value === "cwv" &&
         selectMarketList.map((url, index) => (
           <div className="url-table-wrapper" key={index}>
             <SingleUrlDaily
@@ -99,14 +118,15 @@ function App() {
             />
           </div>
         ))}
-      <hr /> */}
       {render &&
+        selectMetrics.current.value !== "cwv" &&
         selectMarketList.map((url, index) => (
           <SingleUrlTableValuesOnly
             url={url}
             formFactor={selectFormFactor.current.value}
             apiKey={import.meta.env.VITE_API_KEY}
             listIndex={index}
+            metrics={selectMetrics.current.value}
           />
         ))}
     </>

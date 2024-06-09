@@ -10,8 +10,15 @@ td {
 }
 
 th {
-  height: 55px;
   background-color: lightgoldenrodyellow;
+}
+
+.form-container {
+  margin-bottom: 1rem;
+}
+
+.header-periods {
+  height: 55px;
 }
 
 .url-table-wrapper {

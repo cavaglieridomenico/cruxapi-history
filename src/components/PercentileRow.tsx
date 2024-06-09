@@ -2,7 +2,7 @@ import ErrorCell from "./ErrorCell.";
 
 type PercentileRowProps = {
   percentileList: number[] | string[] | undefined | null;
-  type: "cls" | "lcp" | "ttfb" | "inp";
+  type: "cwv" | "cls" | "lcp" | "ttfb" | "inp";
   errorStatus: string | undefined;
 };
 
@@ -21,6 +21,8 @@ const PercentileRow = ({
         return "ms";
       case "inp":
         return "ms";
+      default:
+        return "no-unit";
     }
   };
   return (
@@ -34,7 +36,7 @@ const PercentileRow = ({
         percentileList?.map((percentileItem, index) => {
           return (
             <td key={index}>{`${percentileItem}${
-              percentileItem ? unit(type) : ""
+              percentileItem && unit(type) !== "no-unit" ? unit(type) : ""
             }`}</td>
           );
         })
