@@ -3,6 +3,8 @@ import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
+import { FetchCruxApi } from "./types/types";
+import { fetchCruxHistory } from "./utils/fetch";
 
 function App() {
   const [selectMarketList, setSelectMarketList] = useState<string[]>([]);
@@ -16,7 +18,8 @@ function App() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUpdateUrls(true);
-    setRender(true);
+
+    // setRender(true);
   };
   useEffect(() => {
     if (!updateUrls) return;
@@ -36,6 +39,17 @@ function App() {
       clearTimeout(setNewMarketList);
     };
   }, [updateUrls]);
+
+  useEffect(() => {
+    if (!selectMarketList) return;
+    selectMarketList.forEach((url) => {
+      fetchCruxHistory(
+        url,
+        selectFormFactor.current.value,
+        import.meta.env.VITE_API_KEY
+      );
+    });
+  }, [selectMarketList]);
 
   return (
     <>
@@ -82,7 +96,7 @@ function App() {
         </select>
         <input type="submit" disabled={disabled} value="SEND" />
       </form>
-      {render &&
+      {/* {render &&
         selectMarketList.map((url, index) => (
           <div className="url-table-wrapper" key={index}>
             <SingleUrlDaily
@@ -99,7 +113,7 @@ function App() {
               listIndex={index}
             />
           </div>
-        ))}
+        ))} */}
     </>
   );
 }
