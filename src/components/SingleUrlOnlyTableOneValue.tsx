@@ -79,6 +79,7 @@ const SingleUrlTableOnlyOneValue = ({
                   percentileList={clsData}
                   errorStatus={error?.message}
                   type={metrics}
+                  isOnlyOneValue
                 />
               )}
               {metrics === "lcp" && (
@@ -86,6 +87,7 @@ const SingleUrlTableOnlyOneValue = ({
                   percentileList={lcpData}
                   type={metrics}
                   errorStatus={error?.message}
+                  isOnlyOneValue
                 />
               )}
               {metrics === "ttfb" && (
@@ -93,6 +95,7 @@ const SingleUrlTableOnlyOneValue = ({
                   percentileList={ttfbData}
                   type={metrics}
                   errorStatus={error?.message}
+                  isOnlyOneValue
                 />
               )}
               {metrics === "inp" && (
@@ -100,6 +103,7 @@ const SingleUrlTableOnlyOneValue = ({
                   percentileList={inpData}
                   type={metrics}
                   errorStatus={error?.message}
+                  isOnlyOneValue
                 />
               )}
             </tbody>
