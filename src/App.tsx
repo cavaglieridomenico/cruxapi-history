@@ -3,11 +3,14 @@ import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
-import { FetchCruxApi } from "./types/types";
-import { fetchCruxHistory } from "./utils/fetch";
+import { useFetchData } from "./customHooks/useFetchData";
+import PercentileRow from "./components/PercentileRow";
 
 function App() {
-  const [selectMarketList, setSelectMarketList] = useState<string[]>([]);
+  const { loading, allUrlsMobile } = useFetchData();
+  const [selectMarketList, setSelectMarketList] = useState<string[]>(() =>
+    getMarketList("homepages")
+  );
   const [disabled, setDisabled] = useState(false);
   const [updateUrls, setUpdateUrls] = useState(false);
   const [render, setRender] = useState(false);
@@ -41,15 +44,9 @@ function App() {
   }, [updateUrls]);
 
   useEffect(() => {
-    if (!selectMarketList) return;
-    selectMarketList.forEach((url) => {
-      fetchCruxHistory(
-        url,
-        selectFormFactor.current.value,
-        import.meta.env.VITE_API_KEY
-      );
-    });
-  }, [selectMarketList]);
+    if (loading) return;
+    setRender(true);
+  }, [loading, render]);
 
   return (
     <>
@@ -96,6 +93,7 @@ function App() {
         </select>
         <input type="submit" disabled={disabled} value="SEND" />
       </form>
+      <div>{loading && <p>Loading...</p>}</div>
       {/* {render &&
         selectMarketList.map((url, index) => (
           <div className="url-table-wrapper" key={index}>
@@ -114,6 +112,23 @@ function App() {
             />
           </div>
         ))} */}
+      {render &&
+        allUrlsMobile.homepages
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper">
+              {/* <PercentileRow
+                percentileList={item.data.record.metrics.cumulative_layout_shift.percentilesTimeseries?.p75s?.reverse()}
+                errorStatus={""}
+                type="cls"
+              /> */}
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
     </>
   );
 }
