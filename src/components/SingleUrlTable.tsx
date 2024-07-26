@@ -20,28 +20,38 @@ const SingleUrlTable = ({
   // const [lcpData, setLcpData] = useState<number[] | null>();
   // const [ttfbData, setTtfbData] = useState<number[] | null>();
   // const [inpData, setInpData] = useState<number[] | null>();
-  // const { loading, data, error }: FetchCruxHistoryApi = useFetchCruxHistory(
-  //   url,
-  //   formFactor,
-  //   apiKey,
-  //   listIndex
-  // );
   // useEffect(() => {
-  //   if (!data) return;
-  //   setCollectionPeriod(data?.record?.collectionPeriods?.reverse());
+  //   setCollectionPeriod(
+  //     reverse
+  //       ? data?.data?.record?.collectionPeriods.reverse()
+  //       : data?.data?.record?.collectionPeriods
+  //   );
   //   setClsData(
-  //     data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
+  //     reverse
+  //       ? data?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
+  //       : data?.data?.record?.metrics?.cumulative_layout_shift
+  //           ?.percentilesTimeseries?.p75s
   //   );
   //   setLcpData(
-  //     data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()
+  //     reverse
+  //       ? data?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()
+  //       : data?.data?.record?.metrics?.largest_contentful_paint
+  //           ?.percentilesTimeseries?.p75s
   //   );
   //   setTtfbData(
-  //     data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
+  //     reverse
+  //       ? data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
+  //       : data?.data?.record?.metrics?.experimental_time_to_first_byte
+  //           ?.percentilesTimeseries?.p75s
   //   );
   //   setInpData(
-  //     c
+  //     reverse
+  //       ? data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
+  //       : data?.data?.record?.metrics?.experimental_time_to_first_byte
+  //           ?.percentilesTimeseries?.p75s
   //   );
-  // }, [data]);
+  //   return () => console.log("Good bye!");
+  // }, [data, reverse]);
 
   const record = data?.data?.record;
   const responseFormFactor = record?.key?.formFactor;
@@ -55,7 +65,9 @@ const SingleUrlTable = ({
     record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
   const inpData =
     record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
-  const error = false;
+  const error = data?.data?.error;
+  const errorCode = error?.code;
+  const errorMessage = error?.message;
 
   return (
     <div className={`single-url-table-wrapper`}>
@@ -74,7 +86,10 @@ const SingleUrlTable = ({
       </table>
       <table>
         <thead>
-          <HeaderRow periodList={collectionPeriods} errorStatus={""} />
+          <HeaderRow
+            periodList={collectionPeriods}
+            errorStatus={error ? `${errorCode} - ${errorMessage}` : ""}
+          />
         </thead>
         <tbody>
           <PercentileRow percentileList={clsData} errorStatus={""} type="cls" />

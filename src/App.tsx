@@ -1,52 +1,37 @@
-import { useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
-import { useFetchData } from "./customHooks/useFetchData";
+import { AllUrl, useFetchData } from "./customHooks/useFetchData";
 import PercentileRow from "./components/PercentileRow";
 
 function App() {
-  const { loading, allUrlsMobile } = useFetchData();
-  const [selectMarketList, setSelectMarketList] = useState<string[]>(() =>
-    getMarketList("homepages")
-  );
-  const [disabled, setDisabled] = useState(false);
-  const [updateUrls, setUpdateUrls] = useState(false);
+  const { loading, allUrlsMobile, allUrlsDesktop } = useFetchData();
+
   const [render, setRender] = useState(false);
+  const [disabled, setDisabled] = useState(true);
 
-  const selectMarket = useRef<HTMLSelectElement>(null!);
-  const selectFormFactor = useRef<HTMLSelectElement>(null!);
+  const [selectMarket, setSelectMarket] = useState("all");
+  const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setUpdateUrls(true);
-
-    // setRender(true);
-  };
-  useEffect(() => {
-    if (!updateUrls) return;
-    setSelectMarketList([]);
-    setDisabled(true);
-    const setSelectDisabled = setTimeout(() => {
-      setDisabled(false);
-      setUpdateUrls(false);
-    }, getDisableTime(selectMarket.current.value));
-    const setNewMarketList = setTimeout(
-      () => setSelectMarketList(getMarketList(selectMarket.current.value)),
-      1000
-    );
-
-    return () => {
-      clearTimeout(setSelectDisabled);
-      clearTimeout(setNewMarketList);
-    };
-  }, [updateUrls]);
+  const [allUrlsMobileRender, setAllUrlMobileRender] = useState<AllUrl | []>(
+    []
+  );
+  const [allUrlsDesktopRender, setAllUrlDesktopRender] = useState<AllUrl | []>(
+    []
+  );
 
   useEffect(() => {
     if (loading) return;
+    setAllUrlMobileRender(allUrlsMobile);
+    setAllUrlDesktopRender(allUrlsDesktop);
     setRender(true);
-  }, [loading, render]);
+    setDisabled(false);
+    console.log(allUrlsMobile, allUrlsDesktop);
+  }, [loading]);
+
+  useEffect(() => {}, [selectFormFactor, selectMarket]);
 
   return (
     <>
@@ -61,13 +46,14 @@ function App() {
         CrUX Daily Average: 28-day rolling average data is updated daily, based
         on the aggregated data from the previous 28 days.
       </p>
-      <form onSubmit={(event) => handleSubmit(event)}>
+      <form>
         <select
-          ref={selectMarket}
+          onChange={(event) => setSelectMarket(event.target.value)}
           className="select"
           disabled={disabled}
           style={{ margin: "0 .3rem" }}
         >
+          <option value="all">All</option>
           <option value="homepages">Homepages</option>
           <option value="wp-it-plp">WP IT - PLP</option>
           <option value="wp-it-pdp">WP IT - PDP</option>
@@ -83,7 +69,7 @@ function App() {
           <option value="hp-uk-pdp">HP UK - PDP</option>
         </select>
         <select
-          ref={selectFormFactor}
+          onChange={(event) => setSelectFormFactor(event.target.value)}
           className="select"
           disabled={disabled}
           style={{ margin: "0 .3rem" }}
@@ -91,41 +77,202 @@ function App() {
           <option value="PHONE">MOBILE</option>
           <option value="DESKTOP">DESKTOP</option>
         </select>
-        <input type="submit" disabled={disabled} value="SEND" />
       </form>
       <div>{loading && <p>Loading...</p>}</div>
-      {/* {render &&
-        selectMarketList.map((url, index) => (
-          <div className="url-table-wrapper" key={index}>
-            <SingleUrlDaily
-              url={url}
-              formFactor={selectFormFactor.current.value}
-              apiKey={import.meta.env.VITE_API_KEY}
-              listIndex={index}
-              history={false}
-            />
-            <SingleUrlTable
-              url={url}
-              formFactor={selectFormFactor.current.value}
-              apiKey={import.meta.env.VITE_API_KEY}
-              listIndex={index}
-            />
-          </div>
-        ))} */}
       {render &&
-        allUrlsMobile.homepages
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "homepages") &&
+        allUrlsMobileRender.homepages
           .sort((a, b) => a.index - b.index)
           .map((urlData, index) => (
-            <div className="url-table-wrapper">
-              {/* <PercentileRow
-                percentileList={item.data.record.metrics.cumulative_layout_shift.percentilesTimeseries?.p75s?.reverse()}
-                errorStatus={""}
-                type="cls"
-              /> */}
+            <div className="url-table-wrapper" key={index}>
               <SingleUrlTable
                 data={urlData}
                 listIndex={index}
                 formFactor="PHONE"
+              />
+            </div>
+          ))}
+
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "wp-it-plp") &&
+        allUrlsMobile.wpitPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "wp-pl-plp") &&
+        allUrlsMobile.wpplPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "wp-fr-plp") &&
+        allUrlsMobile.wpfrPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "bk-de-plp") &&
+        allUrlsMobile.bkdePlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "hp-it-plp") &&
+        allUrlsMobile.hpitPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "PHONE" &&
+        (selectMarket === "all" || selectMarket === "hp-uk-plp") &&
+        allUrlsMobile.hpukPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="PHONE"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "homepages") &&
+        allUrlsDesktopRender.homepages
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "wp-it-plp") &&
+        allUrlsDesktop.wpitPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "wp-pl-plp") &&
+        allUrlsDesktop.wpplPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "wp-fr-plp") &&
+        allUrlsDesktop.wpfrPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "bk-de-plp") &&
+        allUrlsDesktop.bkdePlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "hp-it-plp") &&
+        allUrlsDesktop.hpitPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
+              />
+            </div>
+          ))}
+      {render &&
+        selectFormFactor === "DESKTOP" &&
+        (selectMarket === "all" || selectMarket === "hp-uk-plp") &&
+        allUrlsDesktop.hpukPlp
+          .sort((a, b) => a.index - b.index)
+          .map((urlData, index) => (
+            <div className="url-table-wrapper" key={index}>
+              <SingleUrlTable
+                data={urlData}
+                listIndex={index}
+                formFactor="DESKTOP"
               />
             </div>
           ))}

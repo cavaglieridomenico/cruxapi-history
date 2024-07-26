@@ -10,7 +10,7 @@ const HeaderRow = ({ periodList, errorStatus }: HeaderRowProps) => {
   return (
     <tr>
       <th>PERIODS</th>
-      {errorStatus ? (
+      {!!errorStatus ? (
         <ErrorCell errorStatus={errorStatus} />
       ) : (
         periodList?.map((period, index) => (

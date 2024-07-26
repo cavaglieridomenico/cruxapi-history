@@ -7,7 +7,7 @@ type SingleUrl = {
   url: string;
   data: any;
 };
-type AllUrl = {
+export type AllUrl = {
   homepages: SingleUrl[];
   wpitPlp: SingleUrl[];
   wpplPlp: SingleUrl[];
@@ -27,6 +27,15 @@ export const useFetchData = () => {
     hpitPlp: [],
     hpukPlp: [],
   });
+  const [allUrlsDesktop, setAllUrlsDesktop] = useState<AllUrl>({
+    homepages: [],
+    wpitPlp: [],
+    wpplPlp: [],
+    wpfrPlp: [],
+    bkdePlp: [],
+    hpitPlp: [],
+    hpukPlp: [],
+  });
   const [noMoreCalls, setNoMoreCalls] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -35,9 +44,22 @@ export const useFetchData = () => {
   }`;
 
   useEffect(() => {
+    //CALLS FOR MOBILE
     getMarketList("homepages").forEach(async (url, index) => {
       const data = await fetchData(url, "PHONE", urlCruxHistory);
       setAllUrlsMobile((prevState) => {
+        const singleUrl = {
+          index: index + 1,
+          url: url,
+          data: data,
+        };
+        prevState?.homepages?.push(singleUrl);
+        return prevState;
+      });
+    });
+    getMarketList("homepages").forEach(async (url, index) => {
+      const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+      setAllUrlsDesktop((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
@@ -97,32 +119,123 @@ export const useFetchData = () => {
     //     return prevState;
     //   });
     // });
-    // getMarketList("hp-it-plp").forEach(async (url, index) => {
-    //   const data = await fetchData(url, "PHONE", urlCruxHistory);
-    //   setAllUrlsMobile((prevState) => {
-    //     const singleUrl = {
-    //       index: index + 1,
-    //       url: url,
-    //       data: data,
-    //     };
-    //     prevState?.hpitPlp?.push(singleUrl);
-    //     return prevState;
+    // setTimeout(() => {
+    //   getMarketList("hp-it-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "PHONE", urlCruxHistory);
+    //     setAllUrlsMobile((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.hpitPlp?.push(singleUrl);
+    //       return prevState;
+    //     });
     //   });
-    // });
-    // getMarketList("hp-uk-plp").forEach(async (url, index) => {
-    //   const data = await fetchData(url, "PHONE", urlCruxHistory);
-    //   setAllUrlsMobile((prevState) => {
-    //     const singleUrl = {
-    //       index: index + 1,
-    //       url: url,
-    //       data: data,
-    //     };
-    //     prevState?.hpukPlp?.push(singleUrl);
-    //     return prevState;
+    //   getMarketList("hp-uk-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "PHONE", urlCruxHistory);
+    //     setAllUrlsMobile((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.hpukPlp?.push(singleUrl);
+    //       return prevState;
+    //     });
     //   });
-    //   index === getMarketList("hp-uk-plp").length - 1 &&
-    //     setTimeout(() => setNoMoreCalls(true), 2000);
-    // });
+    // }, 20000);
+    //CALLS FOR DESKTOP
+    // setTimeout(() => {
+    //   getMarketList("homepages").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //     setAllUrlsDesktop((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.homepages?.push(singleUrl);
+    //       return prevState;
+    //     });
+    //   });
+    //   getMarketList("wp-it-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //     setAllUrlsDesktop((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.wpitPlp?.push(singleUrl);
+    //       return prevState;
+    //     });
+    //   });
+    //   getMarketList("wp-pl-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //     setAllUrlsDesktop((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.wpplPlp?.push(singleUrl);
+    //       return prevState;
+    //     });
+    //   });
+    //   getMarketList("wp-fr-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //     setAllUrlsDesktop((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.wpfrPlp?.push(singleUrl);
+    //       return prevState;
+    //     });
+    //   });
+    //   getMarketList("bk-de-plp").forEach(async (url, index) => {
+    //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //     setAllUrlsDesktop((prevState) => {
+    //       const singleUrl = {
+    //         index: index + 1,
+    //         url: url,
+    //         data: data,
+    //       };
+    //       prevState?.bkdePlp?.push(singleUrl);
+    //       return prevState;
+    //     });
+    //   });
+    //   setTimeout(() => {
+    //     getMarketList("hp-it-plp").forEach(async (url, index) => {
+    //       const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //       setAllUrlsDesktop((prevState) => {
+    //         const singleUrl = {
+    //           index: index + 1,
+    //           url: url,
+    //           data: data,
+    //         };
+    //         prevState?.hpitPlp?.push(singleUrl);
+    //         return prevState;
+    //       });
+    //     });
+    //     getMarketList("hp-uk-plp").forEach(async (url, index) => {
+    //       const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+    //       setAllUrlsDesktop((prevState) => {
+    //         const singleUrl = {
+    //           index: index + 1,
+    //           url: url,
+    //           data: data,
+    //         };
+    //         prevState?.hpukPlp?.push(singleUrl);
+    //         return prevState;
+    //       });
+    //       index === getMarketList("hp-uk-plp").length - 1 &&
+    //         setTimeout(() => setNoMoreCalls(true), 2000);
+    //     });
+    //   }, 80000);
+    // }, 50000);
   }, []);
 
   // index === getMarketList("wp-it-plp").length - 1 &&
@@ -133,5 +246,5 @@ export const useFetchData = () => {
     setLoading(false);
   }, [noMoreCalls]);
 
-  return { loading, allUrlsMobile };
+  return { loading, allUrlsMobile, allUrlsDesktop };
 };
