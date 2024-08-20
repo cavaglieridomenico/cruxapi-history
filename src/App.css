@@ -1,3 +1,7 @@
+form {
+  margin-bottom: 1rem;
+}
+
 table {
   border-collapse: collapse;
 }
@@ -16,7 +20,7 @@ th {
 
 .url-table-wrapper {
   width: fit-content;
-  margin: 1rem 0 3rem;
+  /* margin: 1rem 0 3rem; */
   background-color: #f3f0f0;
   /* min-height: 565px; */
 }

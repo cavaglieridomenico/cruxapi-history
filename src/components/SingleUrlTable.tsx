@@ -3,15 +3,28 @@ import { useFetchCruxHistory } from "../customHooks/useFetchCruxHistory";
 import PercentileRow from "./PercentileRow";
 import HeaderRow from "./HeaderRow";
 import { CollectionPeriodsEntity, FetchCruxHistoryApi } from "../types/types";
+
 type SingleUrlTableProp = {
   data: any;
   listIndex: number;
   formFactor: string;
+  collectionPeriods: CollectionPeriodsEntity[] | null;
+  clsData: string[] | null;
+  lcpData: number[] | null;
+  ttfbData: number[] | null;
+  inpData: number[] | null;
+  metrics: string;
 };
 const SingleUrlTable = ({
   data,
   listIndex,
   formFactor,
+  collectionPeriods,
+  clsData,
+  lcpData,
+  ttfbData,
+  inpData,
+  metrics,
 }: SingleUrlTableProp) => {
   // const [collectionPeriods, setCollectionPeriod] = useState<
   //   CollectionPeriodsEntity[] | null
@@ -21,60 +34,72 @@ const SingleUrlTable = ({
   // const [ttfbData, setTtfbData] = useState<number[] | null>();
   // const [inpData, setInpData] = useState<number[] | null>();
   // useEffect(() => {
-  //   setCollectionPeriod(
-  //     reverse
-  //       ? data?.data?.record?.collectionPeriods.reverse()
-  //       : data?.data?.record?.collectionPeriods
-  //   );
-  //   setClsData(
-  //     reverse
-  //       ? data?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
-  //       : data?.data?.record?.metrics?.cumulative_layout_shift
-  //           ?.percentilesTimeseries?.p75s
-  //   );
-  //   setLcpData(
-  //     reverse
-  //       ? data?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()
-  //       : data?.data?.record?.metrics?.largest_contentful_paint
-  //           ?.percentilesTimeseries?.p75s
-  //   );
-  //   setTtfbData(
-  //     reverse
-  //       ? data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
-  //       : data?.data?.record?.metrics?.experimental_time_to_first_byte
-  //           ?.percentilesTimeseries?.p75s
-  //   );
-  //   setInpData(
-  //     reverse
-  //       ? data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
-  //       : data?.data?.record?.metrics?.experimental_time_to_first_byte
-  //           ?.percentilesTimeseries?.p75s
-  //   );
-  //   return () => console.log("Good bye!");
-  // }, [data, reverse]);
+  //   setCollectionPeriod([]);
+  //   setClsData([]);
+  //   setLcpData([]);
+  //   setTtfbData([]);
+  //   setInpData([]);
+  //   console.log("Render!");
+  //   setTimeout(() => {
+  //     setCollectionPeriod(data?.data?.record?.collectionPeriods.reverse());
+  //     setClsData(
+  //       data?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
+  //     );
+  //     setLcpData(
+  //       data?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()
+  //     );
+  //     setTtfbData(
+  //       data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
+  //     );
+  //     setInpData(
+  //       data?.data?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()
+  //     );
+  //   }, 1000);
+
+  //   return () => {
+  //     setCollectionPeriod([]);
+  //     setClsData([]);
+  //     setLcpData([]);
+  //     setTtfbData([]);
+  //     setInpData([]);
+  //     console.log("Good Bye!");
+  //   };
+  // }, [formFactor]);
 
   const record = data?.data?.record;
   const responseFormFactor = record?.key?.formFactor;
   const responseUrl = record?.key?.url;
-  const collectionPeriods = record?.collectionPeriods?.reverse();
-  const clsData =
-    record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse();
-  const lcpData =
-    record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse();
-  const ttfbData =
-    record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
-  const inpData =
-    record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
-  const error = data?.data?.error;
+  // let collectionPeriods = record?.collectionPeriods?.reverse();
+  // let clsData =
+  //   record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse();
+  // let lcpData =
+  //   record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse();
+  // let ttfbData =
+  //   record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
+  // let inpData =
+  //   record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse();
+  let error = data?.data?.error;
   const errorCode = error?.code;
   const errorMessage = error?.message;
+
+  // useEffect(() => {
+  //   console.log("Render!");
+  //   return () => {
+  //     setCollectionPeriod([]);
+  //     setClsData([]);
+  //     setLcpData([]);
+  //     setTtfbData([]);
+  //     setInpData([]);
+  //     console.log("Good Bye!");
+  //   };
+  // }, []);
 
   return (
     <div className={`single-url-table-wrapper`}>
       <table>
         <thead>
           <tr>
-            <th>{`${listIndex + 1} - CrUX History (from newest to oldest)`}</th>
+            <th>{`${listIndex + 1} - CrUX History`}</th>
             <th>
               {error
                 ? `${formFactor === "PHONE" ? "MOBILE" : formFactor}`
@@ -91,80 +116,67 @@ const SingleUrlTable = ({
             errorStatus={error ? `${errorCode} - ${errorMessage}` : ""}
           />
         </thead>
-        <tbody>
-          <PercentileRow percentileList={clsData} errorStatus={""} type="cls" />
-          <PercentileRow percentileList={lcpData} errorStatus={""} type="lcp" />
-          <PercentileRow
-            percentileList={ttfbData}
-            errorStatus={""}
-            type="ttfb"
-          />
-          <PercentileRow percentileList={inpData} errorStatus={""} type="inp" />
-          {/* <PercentileRow
-              percentileList={lcpData}
-              type="lcp"
+        {metrics === "cwv" ? (
+          <tbody>
+            <PercentileRow
+              percentileList={clsData}
               errorStatus={""}
+              type="cls"
+            />
+            <PercentileRow
+              percentileList={lcpData}
+              errorStatus={""}
+              type="lcp"
             />
             <PercentileRow
               percentileList={ttfbData}
-              type="ttfb"
               errorStatus={""}
+              type="ttfb"
             />
             <PercentileRow
               percentileList={inpData}
-              type="inp"
               errorStatus={""}
-            /> */}
-        </tbody>
+              type="inp"
+            />
+          </tbody>
+        ) : (
+          <tbody>
+            {metrics === "cls" && (
+              <PercentileRow
+                percentileList={clsData}
+                errorStatus={""}
+                type={metrics}
+                isOnlyOneValue
+              />
+            )}
+            {metrics === "lcp" && (
+              <PercentileRow
+                percentileList={lcpData}
+                errorStatus={""}
+                type={metrics}
+                isOnlyOneValue
+              />
+            )}
+            {metrics === "ttfb" && (
+              <PercentileRow
+                percentileList={ttfbData}
+                errorStatus={""}
+                type={metrics}
+                isOnlyOneValue
+              />
+            )}
+            {metrics === "inp" && (
+              <PercentileRow
+                percentileList={inpData}
+                errorStatus={""}
+                type={metrics}
+                isOnlyOneValue
+              />
+            )}
+          </tbody>
+        )}
       </table>
     </div>
-    // <div className={`single-url-table-wrapper ${loading ? "skeleton" : ""}`}>
-    //   {loading ? (
-    //     <></>
-    //   ) : (
-    //     <>
-    //       <p>
-    //         {error
-    //           ? `${listIndex + 1} - CrUX History - ${
-    //               formFactor === "PHONE" ? "MOBILE" : formFactor
-    //             } - ${url}`
-    //           : `${listIndex + 1} - CrUX History - ${
-    //               responseFormFactor === "PHONE" ? "MOBILE" : responseFormFactor
-    //             } - ${responseUrl}`}
-    //       </p>
-    //       <table>
-    //         <thead>
-    //           <HeaderRow
-    //             periodList={collectionPeriods}
-    //             errorStatus={error?.code}
-    //           />
-    //         </thead>
-    //         <tbody>
-    //           <PercentileRow
-    //             percentileList={clsData}
-    //             errorStatus={error?.message}
-    //             type="cls"
-    //           />
-    //           <PercentileRow
-    //             percentileList={lcpData}
-    //             type="lcp"
-    //             errorStatus={error?.message}
-    //           />
-    //           <PercentileRow
-    //             percentileList={ttfbData}
-    //             type="ttfb"
-    //             errorStatus={error?.message}
-    //           />
-    //           <PercentileRow
-    //             percentileList={inpData}
-    //             type="inp"
-    //             errorStatus={error?.message}
-    //           />
-    //         </tbody>
-    //       </table>
-    //     </>
-    //   )}
-    // </div>
   );
 };
 

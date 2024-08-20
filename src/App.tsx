@@ -1,37 +1,89 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, FormEvent } from "react";
 import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
-import { AllUrl, useFetchData } from "./customHooks/useFetchData";
+import { AllUrl, SingleUrl, useFetchData } from "./customHooks/useFetchData";
 import PercentileRow from "./components/PercentileRow";
 
 function App() {
-  const { loading, allUrlsMobile, allUrlsDesktop } = useFetchData();
+  const { loading, currentUrl, timeoutCalls, allUrlsMobile, allUrlsDesktop } =
+    useFetchData();
 
   const [render, setRender] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
-  const [selectMarket, setSelectMarket] = useState("all");
-  const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
+  const selectMarket = useRef<HTMLSelectElement>(null!);
+  const selectFormFactor = useRef<HTMLSelectElement>(null!);
+  const selectMetrics = useRef<HTMLSelectElement>(null!);
+  // const [selectMarket, setSelectMarket] = useState("all");
+  // const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
 
-  const [allUrlsMobileRender, setAllUrlMobileRender] = useState<AllUrl | []>(
-    []
-  );
-  const [allUrlsDesktopRender, setAllUrlDesktopRender] = useState<AllUrl | []>(
-    []
-  );
+  const [allUrlsMobileRender, setAllUrlsMobileRender] = useState<AllUrl>();
+  const [allUrlsDesktopRender, setAllUrlsDesktopRender] = useState<AllUrl>();
+
+  // const [showMobile, setShowMobile] = useState(false);
+  // const [showDesktop, setShowDesktop] = useState(false);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setRender(false);
+    setDisabled(true);
+    // if (selectFormFactor.current.value === "PHONE") {
+    //   setShowMobile(true);
+    //   setShowDesktop(false);
+    // }
+    // if (selectFormFactor.current.value === "DESKTOP") {
+    //   setShowMobile(false);
+    //   setShowDesktop(true);
+    // }
+    setTimeout(() => {
+      setRender(true);
+      setDisabled(false);
+    }, 500);
+  };
 
   useEffect(() => {
     if (loading) return;
-    setAllUrlMobileRender(allUrlsMobile);
-    setAllUrlDesktopRender(allUrlsDesktop);
-    setRender(true);
+    setAllUrlsMobileRender(allUrlsMobile);
+    setAllUrlsDesktopRender(allUrlsDesktop);
+    // setRender(true);
     setDisabled(false);
-    console.log(allUrlsMobile, allUrlsDesktop);
+    console.log(allUrlsMobile);
+    console.log(allUrlsDesktop);
   }, [loading]);
 
-  useEffect(() => {}, [selectFormFactor, selectMarket]);
+  // useEffect(() => {
+  //   if (loading) return;
+  //   console.log("Select modified!");
+  //   setTimeout(() => {
+  //     setAllUrlsMobileRender(allUrlsMobile);
+  //     setAllUrlsDesktopRender(allUrlsDesktop);
+  //   }, 1000);
+
+  //   setTimeout(() => {
+  //     setRender(true);
+  //   }, 2000);
+  // }, [selectFormFactor, selectMarket]);
+
+  const renderSingleUrltable = (urlList: SingleUrl[] | undefined) =>
+    urlList
+      ?.sort((a, b) => a.index - b.index)
+      .map((urlData, index) => (
+        <div className="url-table-wrapper" key={index}>
+          <SingleUrlTable
+            data={urlData}
+            listIndex={index}
+            formFactor={selectFormFactor?.current?.value}
+            collectionPeriods={urlData?.data?.record?.collectionPeriods?.reverse()}
+            clsData={urlData?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()}
+            lcpData={urlData?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()}
+            ttfbData={urlData?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()}
+            inpData={urlData?.data?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()}
+            metrics={selectMetrics.current.value}
+          />
+        </div>
+      ));
 
   return (
     <>
@@ -46,9 +98,23 @@ function App() {
         CrUX Daily Average: 28-day rolling average data is updated daily, based
         on the aggregated data from the previous 28 days.
       </p>
-      <form>
+      <div style={{ height: "30px" }}>
+        {loading && (
+          <span>
+            Loading CrUX data... {currentUrl} Timeout: {timeoutCalls} sec
+          </span>
+        )}
+      </div>
+      <form onSubmit={(event) => handleSubmit(event)}>
         <select
-          onChange={(event) => setSelectMarket(event.target.value)}
+          // onChange={(event) => {
+          //   // setSelectFormFactor("");
+          //   // setRender(false);
+          //   // setAllUrlsMobileRender(undefined);
+          //   // setAllUrlsDesktopRender(undefined);
+          //   setSelectMarket(event.target.value);
+          // }}
+          ref={selectMarket}
           className="select"
           disabled={disabled}
           style={{ margin: "0 .3rem" }}
@@ -69,7 +135,14 @@ function App() {
           <option value="hp-uk-pdp">HP UK - PDP</option>
         </select>
         <select
-          onChange={(event) => setSelectFormFactor(event.target.value)}
+          // onChange={(event) => {
+          //   // setSelectFormFactor("");
+          //   // setRender(false);
+          //   // setAllUrlsMobileRender(undefined);
+          //   // setAllUrlsDesktopRender(undefined);
+          //   setSelectFormFactor(event.target.value);
+          // }}
+          ref={selectFormFactor}
           className="select"
           disabled={disabled}
           style={{ margin: "0 .3rem" }}
@@ -77,205 +150,312 @@ function App() {
           <option value="PHONE">MOBILE</option>
           <option value="DESKTOP">DESKTOP</option>
         </select>
+        <select
+          ref={selectMetrics}
+          className="select"
+          disabled={disabled}
+          style={{ margin: "0 .3rem" }}
+        >
+          <option value="cwv">CWV</option>
+          <option value="cls">CLS</option>
+          <option value="lcp">LCP</option>
+          <option value="ttfb">TTFB</option>
+          <option value="inp">INP</option>
+        </select>
+        <input type="submit" disabled={disabled} value="SHOW / REVERSE" />
       </form>
-      <div>{loading && <p>Loading...</p>}</div>
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "homepages") &&
-        allUrlsMobileRender.homepages
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "homepages") && (
+          <div className="template-name">
+            <span>
+              <b>HOMEPAGES</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.homepages)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "homepages") && (
+          <div>
+            <span>
+              <b>HOMEPAGES</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.homepages)}
+          </div>
+        )}
 
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "wp-it-plp") &&
-        allUrlsMobile.wpitPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-it-plp") && (
+          <div>
+            <span>
+              <b>WP IT - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpitPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "wp-pl-plp") &&
-        allUrlsMobile.wpplPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-it-plp") && (
+          <div>
+            <span>
+              <b>WP IT - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpitPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "wp-fr-plp") &&
-        allUrlsMobile.wpfrPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-it-pdp") && (
+          <div>
+            <span>
+              <b>WP IT - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpitPdp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "bk-de-plp") &&
-        allUrlsMobile.bkdePlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-it-pdp") && (
+          <div>
+            <span>
+              <b>WP IT - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpitPdp)}
+          </div>
+        )}
+
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "hp-it-plp") &&
-        allUrlsMobile.hpitPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-pl-plp") && (
+          <div>
+            <span>
+              <b>WP PL - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpplPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "PHONE" &&
-        (selectMarket === "all" || selectMarket === "hp-uk-plp") &&
-        allUrlsMobile.hpukPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="PHONE"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-pl-plp") && (
+          <div>
+            <span>
+              <b>WP PL - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpplPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "homepages") &&
-        allUrlsDesktopRender.homepages
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-pl-pdp") && (
+          <div>
+            <span>
+              <b>WP PL - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpplPdp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "wp-it-plp") &&
-        allUrlsDesktop.wpitPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-pl-pdp") && (
+          <div>
+            <span>
+              <b>WP PL - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpplPdp)}
+          </div>
+        )}
+
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "wp-pl-plp") &&
-        allUrlsDesktop.wpplPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-fr-plp") && (
+          <div>
+            <span>
+              <b>WP FR - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpfrPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "wp-fr-plp") &&
-        allUrlsDesktop.wpfrPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-fr-plp") && (
+          <div>
+            <span>
+              <b>WP FR - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpfrPlp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "bk-de-plp") &&
-        allUrlsDesktop.bkdePlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-fr-pdp") && (
+          <div>
+            <span>
+              <b>WP FR - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.wpfrPdp)}
+          </div>
+        )}
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "hp-it-plp") &&
-        allUrlsDesktop.hpitPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "wp-fr-pdp") && (
+          <div>
+            <span>
+              <b>WP FR - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.wpfrPdp)}
+          </div>
+        )}
+
       {render &&
-        selectFormFactor === "DESKTOP" &&
-        (selectMarket === "all" || selectMarket === "hp-uk-plp") &&
-        allUrlsDesktop.hpukPlp
-          .sort((a, b) => a.index - b.index)
-          .map((urlData, index) => (
-            <div className="url-table-wrapper" key={index}>
-              <SingleUrlTable
-                data={urlData}
-                listIndex={index}
-                formFactor="DESKTOP"
-              />
-            </div>
-          ))}
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "bk-de-plp") && (
+          <div>
+            <span>
+              <b>BK DE - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.bkdePlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "bk-de-plp") && (
+          <div>
+            <span>
+              <b>BK DE - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.bkdePlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "bk-de-pdp") && (
+          <div>
+            <span>
+              <b>BK DE - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.bkdePdp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "bk-de-pdp") && (
+          <div>
+            <span>
+              <b>BK DE - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.bkdePdp)}
+          </div>
+        )}
+
+      {render &&
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-it-plp") && (
+          <div>
+            <span>
+              <b>HP IT - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.hpitPlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-it-plp") && (
+          <div>
+            <span>
+              <b>HP IT - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.hpitPlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-it-pdp") && (
+          <div>
+            <span>
+              <b>HP IT - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.hpitPdp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-it-pdp") && (
+          <div>
+            <span>
+              <b>HP IT - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.hpitPdp)}
+          </div>
+        )}
+
+      {render &&
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-uk-plp") && (
+          <div>
+            <span>
+              <b>HHP UK - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.hpukPlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-uk-plp") && (
+          <div>
+            <span>
+              <b>HHP UK - PLP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.hpukPlp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "PHONE" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-uk-pdp") && (
+          <div>
+            <span>
+              <b>HHP UK - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsMobileRender?.hpukPdp)}
+          </div>
+        )}
+      {render &&
+        selectFormFactor.current.value === "DESKTOP" &&
+        (selectMarket?.current?.value === "all" ||
+          selectMarket?.current?.value === "hp-uk-pdp") && (
+          <div>
+            <span>
+              <b>HHP UK - PDP</b>
+            </span>
+            {renderSingleUrltable(allUrlsDesktopRender?.hpukPdp)}
+          </div>
+        )}
     </>
   );
 }
