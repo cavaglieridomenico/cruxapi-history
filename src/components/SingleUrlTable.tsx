@@ -14,6 +14,11 @@ type SingleUrlTableProp = {
   ttfbData: number[] | null;
   inpData: number[] | null;
   metrics: string;
+  responseFormFactor: string;
+  responseUrl: string;
+  errorCode: string;
+  errorMessage: string;
+  errorStatus: string;
 };
 const SingleUrlTable = ({
   data,
@@ -25,75 +30,12 @@ const SingleUrlTable = ({
   ttfbData,
   inpData,
   metrics,
+  responseFormFactor,
+  responseUrl,
+  errorCode,
+  errorMessage,
+  errorStatus,
 }: SingleUrlTableProp) => {
-  // const [collectionPeriods, setCollectionPeriod] = useState<
-  //   CollectionPeriodsEntity[] | null
-  // >();
-  // const [clsData, setClsData] = useState<string[] | null>();
-  // const [lcpData, setLcpData] = useState<number[] | null>();
-  // const [ttfbData, setTtfbData] = useState<number[] | null>();
-  // const [inpData, setInpData] = useState<number[] | null>();
-  // useEffect(() => {
-  //   setCollectionPeriod([]);
-  //   setClsData([]);
-  //   setLcpData([]);
-  //   setTtfbData([]);
-  //   setInpData([]);
-  //   console.log("Render!");
-  //   setTimeout(() => {
-  //     setCollectionPeriod(data?.data?.record?.collectionPeriods.reverse());
-  //     setClsData(
-  //       data?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()
-  //     );
-  //     setLcpData(
-  //       data?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()
-  //     );
-  //     setTtfbData(
-  //       data?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()
-  //     );
-  //     setInpData(
-  //       data?.data?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()
-  //     );
-  //   }, 1000);
-
-  //   return () => {
-  //     setCollectionPeriod([]);
-  //     setClsData([]);
-  //     setLcpData([]);
-  //     setTtfbData([]);
-  //     setInpData([]);
-  //     console.log("Good Bye!");
-  //   };
-  // }, [formFactor]);
-
-  const record = data?.data?.record;
-  const responseFormFactor = record?.key?.formFactor;
-  const responseUrl = record?.key?.url;
-  // let collectionPeriods = record?.collectionPeriods?.reverse();
-  // let clsData =
-  //   record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse();
-  // let lcpData =
-  //   record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse();
-  // let ttfbData =
-  //   record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse();
-  // let inpData =
-  //   record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse();
-  let error = data?.data?.error;
-  const errorCode = error?.code;
-  const errorMessage = error?.message;
-
-  // useEffect(() => {
-  //   console.log("Render!");
-  //   return () => {
-  //     setCollectionPeriod([]);
-  //     setClsData([]);
-  //     setLcpData([]);
-  //     setTtfbData([]);
-  //     setInpData([]);
-  //     console.log("Good Bye!");
-  //   };
-  // }, []);
-
   return (
     <div className={`single-url-table-wrapper`}>
       <table>
@@ -101,11 +43,11 @@ const SingleUrlTable = ({
           <tr>
             <th>{`${listIndex + 1} - CrUX History`}</th>
             <th>
-              {error
+              {errorCode
                 ? `${formFactor === "PHONE" ? "MOBILE" : formFactor}`
                 : `${formFactor === "PHONE" ? "MOBILE" : responseFormFactor}`}
             </th>
-            <th>{error ? data?.url : responseUrl}</th>
+            <th>{errorCode ? data?.url : responseUrl}</th>
           </tr>
         </thead>
       </table>
@@ -113,29 +55,29 @@ const SingleUrlTable = ({
         <thead>
           <HeaderRow
             periodList={collectionPeriods}
-            errorStatus={error ? `${errorCode} - ${errorMessage}` : ""}
+            errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
           />
         </thead>
         {metrics === "cwv" ? (
           <tbody>
             <PercentileRow
               percentileList={clsData}
-              errorStatus={""}
+              errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
               type="cls"
             />
             <PercentileRow
               percentileList={lcpData}
-              errorStatus={""}
+              errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
               type="lcp"
             />
             <PercentileRow
               percentileList={ttfbData}
-              errorStatus={""}
+              errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
               type="ttfb"
             />
             <PercentileRow
               percentileList={inpData}
-              errorStatus={""}
+              errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
               type="inp"
             />
           </tbody>
@@ -144,7 +86,7 @@ const SingleUrlTable = ({
             {metrics === "cls" && (
               <PercentileRow
                 percentileList={clsData}
-                errorStatus={""}
+                errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
                 type={metrics}
                 isOnlyOneValue
               />
@@ -152,7 +94,7 @@ const SingleUrlTable = ({
             {metrics === "lcp" && (
               <PercentileRow
                 percentileList={lcpData}
-                errorStatus={""}
+                errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
                 type={metrics}
                 isOnlyOneValue
               />
@@ -160,7 +102,7 @@ const SingleUrlTable = ({
             {metrics === "ttfb" && (
               <PercentileRow
                 percentileList={ttfbData}
-                errorStatus={""}
+                errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
                 type={metrics}
                 isOnlyOneValue
               />
@@ -168,7 +110,7 @@ const SingleUrlTable = ({
             {metrics === "inp" && (
               <PercentileRow
                 percentileList={inpData}
-                errorStatus={""}
+                errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
                 type={metrics}
                 isOnlyOneValue
               />

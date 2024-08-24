@@ -19,8 +19,9 @@ th {
 }
 
 .url-table-wrapper {
+  display: flex;
   width: fit-content;
-  /* margin: 1rem 0 3rem; */
+  margin: 0 0 2rem 0;
   background-color: #f3f0f0;
   /* min-height: 565px; */
 }
@@ -32,6 +33,23 @@ th {
   @media (max-width: 640px) {
     min-width: 1200px;
   }
+}
+
+.daily-table-wrapper {
+  min-height: 195px;
+  min-width: 410px;
+  padding-top: 0.2rem;
+  @media (max-width: 640px) {
+    min-width: 1200px;
+  }
+}
+
+.daily-url {
+  width: 195px;
+  text-wrap: wrap;
+  padding: unset;
+  vertical-align: top;
+  word-break: break-all;
 }
 
 .single-url-table-wrapper.single-url-table-wrapper.daily-table-wrapper {

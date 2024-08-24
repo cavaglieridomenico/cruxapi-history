@@ -5,9 +5,10 @@ import fetchData from "../utils/fetchData";
 export type SingleUrl = {
   index: number;
   url: string;
-  data: any;
+  dailyData: any;
+  historyData: any;
 };
-export type AllUrl = {
+export type AllUrls = {
   homepages: SingleUrl[];
   wpitPlp: SingleUrl[];
   wpplPlp: SingleUrl[];
@@ -24,7 +25,7 @@ export type AllUrl = {
 };
 
 export const useFetchData = () => {
-  const [allUrlsMobile, setAllUrlsMobile] = useState<AllUrl>({
+  const [allUrlsMobile, setAllUrlsMobile] = useState<AllUrls>({
     homepages: [],
     wpitPlp: [],
     wpplPlp: [],
@@ -39,7 +40,7 @@ export const useFetchData = () => {
     hpitPdp: [],
     hpukPdp: [],
   });
-  const [allUrlsDesktop, setAllUrlsDesktop] = useState<AllUrl>({
+  const [allUrlsDesktop, setAllUrlsDesktop] = useState<AllUrls>({
     homepages: [],
     wpitPlp: [],
     wpplPlp: [],
@@ -62,37 +63,52 @@ export const useFetchData = () => {
   const urlCruxHistory = `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${
     import.meta.env.VITE_API_KEY
   }`;
+  const urlCruxHistory2 = `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${
+    import.meta.env.VITE_API_KEY_2
+  }`;
+
+  const urlCruxDaily = `https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${
+    import.meta.env.VITE_API_KEY
+  }`;
+  const urlCruxDaily2 = `https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${
+    import.meta.env.VITE_API_KEY_2
+  }`;
 
   // useEffect(() => {
-  //   getMarketList("homepages").forEach(async (url, index) => {
-  //     const data = await fetchData(url, "PHONE", urlCruxHistory);
+  //   getMarketList("wp-it-plp").forEach(async (url, index) => {
+  //     const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+  //     const historyData = await fetchData(url, "PHONE", urlCruxHistory);
   //     setCurrentUrl(`MOBILE - ${url}`);
   //     setAllUrlsMobile((prevState) => {
   //       const singleUrl = {
   //         index: index + 1,
   //         url: url,
-  //         data: data,
+  //         dailyData,
+  //         historyData,
   //       };
-  //       prevState?.homepages?.push(singleUrl);
+  //       prevState?.wpitPlp?.push(singleUrl);
   //       return prevState;
   //     });
   //   });
-  //   getMarketList("homepages").forEach(async (url, index) => {
-  //     const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+  //   getMarketList("wp-it-plp").forEach(async (url, index) => {
+  //     const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+  //     const historyData = await fetchData(url, "DESKTOP", urlCruxHistory);
   //     setCurrentUrl(`DESKTOP - ${url}`);
   //     setAllUrlsDesktop((prevState) => {
   //       const singleUrl = {
   //         index: index + 1,
   //         url: url,
-  //         data: data,
+  //         dailyData,
+  //         historyData,
   //       };
-  //       prevState?.homepages?.push(singleUrl);
+  //       prevState?.wpitPlp?.push(singleUrl);
   //       return prevState;
   //     });
   //     index === getMarketList("homepages").length - 1 &&
   //       setTimeout(() => setNoMoreCalls(true), 2000);
   //   });
   // }, []);
+
   useEffect(() => {
     let timeoutCallsInterval = setInterval(() => {
       if (timeoutCalls === 0) return;
@@ -103,91 +119,105 @@ export const useFetchData = () => {
   useEffect(() => {
     //CALLS FOR HOME/PLP MOBILE
     getMarketList("homepages").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.homepages?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("wp-it-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.wpitPlp?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("wp-pl-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.wpplPlp?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("wp-fr-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.wpfrPlp?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("bk-de-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.bkdePlp?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("hp-it-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.hpitPlp?.push(singleUrl);
         return prevState;
       });
     });
     getMarketList("hp-uk-plp").forEach(async (url, index) => {
-      const data = await fetchData(url, "PHONE", urlCruxHistory);
+      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
       setCurrentUrl(`MOBILE - ${url}`);
       setAllUrlsMobile((prevState) => {
         const singleUrl = {
           index: index + 1,
           url: url,
-          data: data,
+          dailyData,
+          historyData,
         };
         prevState?.hpukPlp?.push(singleUrl);
         return prevState;
@@ -197,91 +227,105 @@ export const useFetchData = () => {
     setTimeoutCalls(60);
     setTimeout(() => {
       getMarketList("homepages").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.homepages?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("wp-it-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpitPlp?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("wp-pl-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpplPlp?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("wp-fr-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpfrPlp?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("bk-de-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.bkdePlp?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("hp-it-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpitPlp?.push(singleUrl);
           return prevState;
         });
       });
       getMarketList("hp-uk-plp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpukPlp?.push(singleUrl);
           return prevState;
@@ -292,13 +336,15 @@ export const useFetchData = () => {
     //CALLS FOR PDP MOBILE
     setTimeout(() => {
       getMarketList("wp-it-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpitPdp?.push(singleUrl);
           return prevState;
@@ -308,13 +354,15 @@ export const useFetchData = () => {
     }, 120000);
     setTimeout(() => {
       getMarketList("wp-pl-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpplPdp?.push(singleUrl);
           return prevState;
@@ -324,13 +372,15 @@ export const useFetchData = () => {
     }, 180000);
     setTimeout(() => {
       getMarketList("wp-fr-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpfrPdp?.push(singleUrl);
           return prevState;
@@ -340,13 +390,15 @@ export const useFetchData = () => {
     }, 240000);
     setTimeout(() => {
       getMarketList("bk-de-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.bkdePdp?.push(singleUrl);
           return prevState;
@@ -356,13 +408,15 @@ export const useFetchData = () => {
     }, 300000);
     setTimeout(() => {
       getMarketList("hp-it-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpitPdp?.push(singleUrl);
           return prevState;
@@ -372,13 +426,15 @@ export const useFetchData = () => {
     }, 360000);
     setTimeout(() => {
       getMarketList("hp-uk-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "PHONE", urlCruxHistory);
+        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
+        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
         setCurrentUrl(`MOBILE - ${url}`);
         setAllUrlsMobile((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpukPdp?.push(singleUrl);
           return prevState;
@@ -389,13 +445,15 @@ export const useFetchData = () => {
     // CALLS FOR PDP DESKTOP
     setTimeout(() => {
       getMarketList("wp-it-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpitPdp?.push(singleUrl);
           return prevState;
@@ -405,13 +463,15 @@ export const useFetchData = () => {
     }, 480000);
     setTimeout(() => {
       getMarketList("wp-pl-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpplPdp?.push(singleUrl);
           return prevState;
@@ -421,13 +481,15 @@ export const useFetchData = () => {
     }, 540000);
     setTimeout(() => {
       getMarketList("wp-fr-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.wpfrPdp?.push(singleUrl);
           return prevState;
@@ -437,13 +499,15 @@ export const useFetchData = () => {
     }, 600000);
     setTimeout(() => {
       getMarketList("bk-de-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.bkdePdp?.push(singleUrl);
           return prevState;
@@ -453,13 +517,15 @@ export const useFetchData = () => {
     }, 660000);
     setTimeout(() => {
       getMarketList("hp-it-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpitPdp?.push(singleUrl);
           return prevState;
@@ -469,13 +535,15 @@ export const useFetchData = () => {
     }, 720000);
     setTimeout(() => {
       getMarketList("hp-uk-pdp").forEach(async (url, index) => {
-        const data = await fetchData(url, "DESKTOP", urlCruxHistory);
+        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
+        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
         setCurrentUrl(`DESKTOP - ${url}`);
         setAllUrlsDesktop((prevState) => {
           const singleUrl = {
             index: index + 1,
             url: url,
-            data: data,
+            dailyData,
+            historyData,
           };
           prevState?.hpukPdp?.push(singleUrl);
           return prevState;

@@ -1,127 +1,208 @@
-import { useFetchCrux } from "../customHooks/useFetchCrux";
-import { FetchCruxApi } from "../types/types";
+import { CollectionPeriodsEntity } from "../types/types";
 import ErrorCell from "./ErrorCell.";
 
 type SingleUrlDailyProps = {
-  url: string;
-  formFactor: string;
-  apiKey: string;
+  data: any;
   listIndex: number;
-  history: boolean;
+  formFactor: string;
+  collectionPeriod: CollectionPeriodsEntity | null;
+  clsData: string | null;
+  lcpData: number | null;
+  ttfbData: number | null;
+  inpData: number | null;
+  metrics: string;
+  responseFormFactor: string;
+  responseUrl: string;
+  errorCode: string;
+  errorMessage: string;
+  errorStatus: string;
 };
 
 const SingleUrlDaily = ({
-  url,
-  formFactor,
-  apiKey,
+  data,
   listIndex,
+  formFactor,
+  collectionPeriod,
+  clsData,
+  lcpData,
+  ttfbData,
+  inpData,
+  metrics,
+  responseFormFactor,
+  responseUrl,
+  errorCode,
+  errorMessage,
+  errorStatus,
 }: SingleUrlDailyProps) => {
-  const { loading, data, error }: FetchCruxApi = useFetchCrux(
-    url,
-    formFactor,
-    apiKey,
-    listIndex
-  );
-
-  const record = data?.record;
-  const responseFormFactor = record?.key?.formFactor;
-  const responseUrl = record?.key?.url;
-  const period = record?.collectionPeriod;
-  const clsPercentile =
-    record?.metrics?.cumulative_layout_shift?.percentiles?.p75;
-  const lcpPercentile =
-    record?.metrics?.largest_contentful_paint?.percentiles?.p75;
-  const ttfbPercentile =
-    record?.metrics?.experimental_time_to_first_byte?.percentiles?.p75;
-  const inpPercentile =
-    record?.metrics?.interaction_to_next_paint?.percentiles?.p75;
-
   return (
-    <div
-      className={`single-url-table-wrapper daily-table-wrapper ${
-        loading ? "skeleton" : ""
-      }`}
-    >
-      {loading ? (
-        <></>
-      ) : (
-        <>
-          <p>
-            {error
-              ? `${listIndex + 1} - CrUX Daily Average - ${
-                  formFactor === "PHONE" ? "MOBILE" : formFactor
-                } - ${url}`
-              : `${listIndex + 1} - CrUX Daily Average - ${
-                  responseFormFactor === "PHONE" ? "MOBILE" : responseFormFactor
-                } - ${responseUrl}`}
-          </p>
-          <table>
-            <thead>
-              <tr>
-                <th>PERIODS</th>
-                {error ? (
-                  <ErrorCell errorStatus={error.code} />
-                ) : (
-                  <th className="header-cell-daily">{` 
-          ${period?.lastDate?.day}/${period?.lastDate?.month}/${period?.lastDate?.year}
-          ${period?.firstDate?.day}/${period?.firstDate?.month}/${period?.firstDate?.year}`}</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
+    <div className="daily-table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{`${listIndex + 1} - CrUX Daily`}</th>
+            <th>
+              {errorCode
+                ? `${formFactor === "PHONE" ? "MOBILE" : formFactor}`
+                : `${formFactor === "PHONE" ? "MOBILE" : responseFormFactor}`}
+            </th>
+            <th className="daily-url">{errorCode ? data?.url : responseUrl}</th>
+          </tr>
+        </thead>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>PERIODS</th>
+            {errorCode ? (
+              <ErrorCell
+                errorStatus={errorCode ? `${errorCode} - ${errorMessage}` : ""}
+              />
+            ) : (
+              <>
+                <th className="header-cell-daily">{` 
+          ${collectionPeriod?.lastDate?.day}/${collectionPeriod?.lastDate?.month}/${collectionPeriod?.lastDate?.year}
+          ${collectionPeriod?.firstDate?.day}/${collectionPeriod?.firstDate?.month}/${collectionPeriod?.firstDate?.year}`}</th>
+              </>
+            )}
+          </tr>
+        </thead>
+        {metrics === "cwv" ? (
+          <tbody>
+            <tr>
+              <td>
+                <b>CLS</b>
+              </td>
+              {errorCode ? (
+                <ErrorCell
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                />
+              ) : (
+                <td>{clsData}</td>
+              )}
+            </tr>
+            <tr>
+              <td>
+                <b>LCP</b>
+              </td>
+              {errorCode ? (
+                <ErrorCell
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                />
+              ) : (
+                <td>
+                  {lcpData}
+                  {lcpData ? "ms" : ""}
+                </td>
+              )}
+            </tr>
+            <tr>
+              <td>
+                <b>TTFB</b>
+              </td>
+              {errorCode ? (
+                <ErrorCell
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                />
+              ) : (
+                <td>
+                  {ttfbData}
+                  {ttfbData ? "ms" : ""}
+                </td>
+              )}
+            </tr>
+            <tr>
+              <td>
+                <b>INP</b>
+              </td>
+              {errorCode ? (
+                <ErrorCell
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                />
+              ) : (
+                <td>
+                  {inpData}
+                  {inpData ? "ms" : ""}
+                </td>
+              )}
+            </tr>
+          </tbody>
+        ) : (
+          <tbody>
+            {metrics === "cls" && (
               <tr>
                 <td>
                   <b>CLS</b>
                 </td>
-                {error ? (
-                  <ErrorCell errorStatus={error.message} />
+                {errorCode ? (
+                  <ErrorCell
+                    errorStatus={
+                      errorCode ? `${errorCode} - ${errorMessage}` : ""
+                    }
+                  />
                 ) : (
-                  <td>{clsPercentile}</td>
+                  <td>{clsData}</td>
                 )}
               </tr>
+            )}
+            {metrics === "lcp" && (
               <tr>
                 <td>
                   <b>LCP</b>
                 </td>
-                {error ? (
-                  <ErrorCell errorStatus={error.message} />
+                {errorCode ? (
+                  <ErrorCell
+                    errorStatus={
+                      errorCode ? `${errorCode} - ${errorMessage}` : ""
+                    }
+                  />
                 ) : (
-                  <td>
-                    {lcpPercentile}
-                    {lcpPercentile ? "ms" : ""}
-                  </td>
+                  <td>{lcpData}</td>
                 )}
               </tr>
+            )}
+            {metrics === "ttfb" && (
               <tr>
                 <td>
                   <b>TTFB</b>
                 </td>
-                {error ? (
-                  <ErrorCell errorStatus={error.message} />
+                {errorCode ? (
+                  <ErrorCell
+                    errorStatus={
+                      errorCode ? `${errorCode} - ${errorMessage}` : ""
+                    }
+                  />
                 ) : (
-                  <td>
-                    {ttfbPercentile}
-                    {ttfbPercentile ? "ms" : ""}
-                  </td>
+                  <td>{ttfbData}</td>
                 )}
               </tr>
+            )}
+            {metrics === "inp" && (
               <tr>
                 <td>
                   <b>INP</b>
                 </td>
-                {error ? (
-                  <ErrorCell errorStatus={error.message} />
+                {errorCode ? (
+                  <ErrorCell
+                    errorStatus={
+                      errorCode ? `${errorCode} - ${errorMessage}` : ""
+                    }
+                  />
                 ) : (
-                  <td>
-                    {inpPercentile}
-                    {inpPercentile ? "ms" : ""}
-                  </td>
+                  <td>{inpData}</td>
                 )}
               </tr>
-            </tbody>
-          </table>
-        </>
-      )}
+            )}
+          </tbody>
+        )}
+      </table>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import "./App.css";
 import SingleUrlTable from "./components/SingleUrlTable";
 import { getDisableTime, getMarketList } from "./utils/utils";
 import SingleUrlDaily from "./components/SingleUrlDaily";
-import { AllUrl, SingleUrl, useFetchData } from "./customHooks/useFetchData";
+import { AllUrls, SingleUrl, useFetchData } from "./customHooks/useFetchData";
 import PercentileRow from "./components/PercentileRow";
 
 function App() {
@@ -16,27 +16,16 @@ function App() {
   const selectMarket = useRef<HTMLSelectElement>(null!);
   const selectFormFactor = useRef<HTMLSelectElement>(null!);
   const selectMetrics = useRef<HTMLSelectElement>(null!);
-  // const [selectMarket, setSelectMarket] = useState("all");
-  // const [selectFormFactor, setSelectFormFactor] = useState("PHONE");
+  const selectApi = useRef<HTMLSelectElement>(null!);
 
-  const [allUrlsMobileRender, setAllUrlsMobileRender] = useState<AllUrl>();
-  const [allUrlsDesktopRender, setAllUrlsDesktopRender] = useState<AllUrl>();
-
-  // const [showMobile, setShowMobile] = useState(false);
-  // const [showDesktop, setShowDesktop] = useState(false);
+  const [allUrlsMobileRender, setAllUrlsMobileRender] = useState<AllUrls>();
+  const [allUrlsDesktopRender, setAllUrlsDesktopRender] = useState<AllUrls>();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setRender(false);
     setDisabled(true);
-    // if (selectFormFactor.current.value === "PHONE") {
-    //   setShowMobile(true);
-    //   setShowDesktop(false);
-    // }
-    // if (selectFormFactor.current.value === "DESKTOP") {
-    //   setShowMobile(false);
-    //   setShowDesktop(true);
-    // }
+
     setTimeout(() => {
       setRender(true);
       setDisabled(false);
@@ -47,41 +36,66 @@ function App() {
     if (loading) return;
     setAllUrlsMobileRender(allUrlsMobile);
     setAllUrlsDesktopRender(allUrlsDesktop);
-    // setRender(true);
     setDisabled(false);
     console.log(allUrlsMobile);
     console.log(allUrlsDesktop);
   }, [loading]);
-
-  // useEffect(() => {
-  //   if (loading) return;
-  //   console.log("Select modified!");
-  //   setTimeout(() => {
-  //     setAllUrlsMobileRender(allUrlsMobile);
-  //     setAllUrlsDesktopRender(allUrlsDesktop);
-  //   }, 1000);
-
-  //   setTimeout(() => {
-  //     setRender(true);
-  //   }, 2000);
-  // }, [selectFormFactor, selectMarket]);
 
   const renderSingleUrltable = (urlList: SingleUrl[] | undefined) =>
     urlList
       ?.sort((a, b) => a.index - b.index)
       .map((urlData, index) => (
         <div className="url-table-wrapper" key={index}>
-          <SingleUrlTable
-            data={urlData}
-            listIndex={index}
-            formFactor={selectFormFactor?.current?.value}
-            collectionPeriods={urlData?.data?.record?.collectionPeriods?.reverse()}
-            clsData={urlData?.data?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()}
-            lcpData={urlData?.data?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()}
-            ttfbData={urlData?.data?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()}
-            inpData={urlData?.data?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()}
-            metrics={selectMetrics.current.value}
-          />
+          {(selectApi?.current?.value === "daily" ||
+            selectApi?.current?.value === "daily+history") && (
+            <SingleUrlDaily
+              data={urlData}
+              formFactor={selectFormFactor?.current?.value}
+              listIndex={index}
+              collectionPeriod={urlData?.dailyData?.record?.collectionPeriod}
+              clsData={
+                urlData?.dailyData?.record?.metrics?.cumulative_layout_shift
+                  ?.percentiles?.p75
+              }
+              lcpData={
+                urlData?.dailyData?.record?.metrics?.largest_contentful_paint
+                  ?.percentiles?.p75
+              }
+              ttfbData={
+                urlData?.dailyData?.record?.metrics
+                  ?.experimental_time_to_first_byte?.percentiles?.p75
+              }
+              inpData={
+                urlData?.dailyData?.record?.metrics?.interaction_to_next_paint
+                  ?.percentiles?.p75
+              }
+              metrics={selectMetrics.current.value}
+              responseFormFactor={urlData?.dailyData?.record?.key?.formFactor}
+              responseUrl={urlData?.dailyData?.record?.key?.url}
+              errorCode={urlData?.dailyData?.error?.code}
+              errorMessage={urlData?.dailyData?.error?.message}
+              errorStatus={urlData?.dailyData?.error?.status}
+            />
+          )}
+          {(selectApi?.current?.value === "history" ||
+            selectApi?.current?.value === "daily+history") && (
+            <SingleUrlTable
+              data={urlData}
+              listIndex={index}
+              formFactor={selectFormFactor?.current?.value}
+              collectionPeriods={urlData?.historyData?.record?.collectionPeriods?.reverse()}
+              clsData={urlData?.historyData?.record?.metrics?.cumulative_layout_shift?.percentilesTimeseries?.p75s?.reverse()}
+              lcpData={urlData?.historyData?.record?.metrics?.largest_contentful_paint?.percentilesTimeseries?.p75s?.reverse()}
+              ttfbData={urlData?.historyData?.record?.metrics?.experimental_time_to_first_byte?.percentilesTimeseries?.p75s?.reverse()}
+              inpData={urlData?.historyData?.record?.metrics?.interaction_to_next_paint?.percentilesTimeseries?.p75s?.reverse()}
+              metrics={selectMetrics.current.value}
+              responseFormFactor={urlData?.historyData?.record?.key?.formFactor}
+              responseUrl={urlData?.historyData?.record?.key?.url}
+              errorCode={urlData?.historyData?.error?.code}
+              errorMessage={urlData?.historyData?.error?.message}
+              errorStatus={urlData?.historyData?.error?.status}
+            />
+          )}
         </div>
       ));
 
@@ -98,7 +112,7 @@ function App() {
         CrUX Daily Average: 28-day rolling average data is updated daily, based
         on the aggregated data from the previous 28 days.
       </p>
-      <div style={{ height: "30px" }}>
+      <div style={{ height: "50px", color: "grey" }}>
         {loading && (
           <span>
             Loading CrUX data... {currentUrl} Timeout: {timeoutCalls} sec
@@ -107,13 +121,6 @@ function App() {
       </div>
       <form onSubmit={(event) => handleSubmit(event)}>
         <select
-          // onChange={(event) => {
-          //   // setSelectFormFactor("");
-          //   // setRender(false);
-          //   // setAllUrlsMobileRender(undefined);
-          //   // setAllUrlsDesktopRender(undefined);
-          //   setSelectMarket(event.target.value);
-          // }}
           ref={selectMarket}
           className="select"
           disabled={disabled}
@@ -135,13 +142,6 @@ function App() {
           <option value="hp-uk-pdp">HP UK - PDP</option>
         </select>
         <select
-          // onChange={(event) => {
-          //   // setSelectFormFactor("");
-          //   // setRender(false);
-          //   // setAllUrlsMobileRender(undefined);
-          //   // setAllUrlsDesktopRender(undefined);
-          //   setSelectFormFactor(event.target.value);
-          // }}
           ref={selectFormFactor}
           className="select"
           disabled={disabled}
@@ -161,6 +161,16 @@ function App() {
           <option value="lcp">LCP</option>
           <option value="ttfb">TTFB</option>
           <option value="inp">INP</option>
+        </select>
+        <select
+          ref={selectApi}
+          className="select"
+          disabled={disabled}
+          style={{ margin: "0 .3rem" }}
+        >
+          <option value="daily+history">DAILY + HISTORY</option>
+          <option value="daily">DAILY</option>
+          <option value="history">HISTORY</option>
         </select>
         <input type="submit" disabled={disabled} value="SHOW / REVERSE" />
       </form>
@@ -418,7 +428,7 @@ function App() {
           selectMarket?.current?.value === "hp-uk-plp") && (
           <div>
             <span>
-              <b>HHP UK - PLP</b>
+              <b>HP UK - PLP</b>
             </span>
             {renderSingleUrltable(allUrlsMobileRender?.hpukPlp)}
           </div>
@@ -429,7 +439,7 @@ function App() {
           selectMarket?.current?.value === "hp-uk-plp") && (
           <div>
             <span>
-              <b>HHP UK - PLP</b>
+              <b>HP UK - PLP</b>
             </span>
             {renderSingleUrltable(allUrlsDesktopRender?.hpukPlp)}
           </div>
@@ -440,7 +450,7 @@ function App() {
           selectMarket?.current?.value === "hp-uk-pdp") && (
           <div>
             <span>
-              <b>HHP UK - PDP</b>
+              <b>HP UK - PDP</b>
             </span>
             {renderSingleUrltable(allUrlsMobileRender?.hpukPdp)}
           </div>
@@ -451,7 +461,7 @@ function App() {
           selectMarket?.current?.value === "hp-uk-pdp") && (
           <div>
             <span>
-              <b>HHP UK - PDP</b>
+              <b>HP UK - PDP</b>
             </span>
             {renderSingleUrltable(allUrlsDesktopRender?.hpukPdp)}
           </div>
