@@ -259,7 +259,7 @@ function App() {
           selectMarket?.current?.value === "wp-pl-plp") && (
           <div>
             <span>
-              <b>WP PL - PDP</b>
+              <b>WP PL - PLP</b>
             </span>
             {renderSingleUrltable(allUrlsDesktopRender?.wpplPlp)}
           </div>
@@ -281,7 +281,7 @@ function App() {
           selectMarket?.current?.value === "wp-pl-pdp") && (
           <div>
             <span>
-              <b>WP PL - PLP</b>
+              <b>WP PL - PDP</b>
             </span>
             {renderSingleUrltable(allUrlsDesktopRender?.wpplPdp)}
           </div>
