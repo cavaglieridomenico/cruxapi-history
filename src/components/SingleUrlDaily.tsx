@@ -32,7 +32,6 @@ const SingleUrlDaily = ({
   responseUrl,
   errorCode,
   errorMessage,
-  errorStatus,
 }: SingleUrlDailyProps) => {
   return (
     <div className="daily-table-wrapper">
@@ -199,6 +198,38 @@ const SingleUrlDaily = ({
                   <td>{inpData}</td>
                 )}
               </tr>
+            )}
+            {metrics === "lcp+ttfb" && (
+              <>
+                <tr>
+                  <td>
+                    <b>LCP</b>
+                  </td>
+                  {errorCode ? (
+                    <ErrorCell
+                      errorStatus={
+                        errorCode ? `${errorCode} - ${errorMessage}` : ""
+                      }
+                    />
+                  ) : (
+                    <td>{lcpData}</td>
+                  )}
+                </tr>
+                <tr>
+                  <td>
+                    <b>TTFB</b>
+                  </td>
+                  {errorCode ? (
+                    <ErrorCell
+                      errorStatus={
+                        errorCode ? `${errorCode} - ${errorMessage}` : ""
+                      }
+                    />
+                  ) : (
+                    <td>{ttfbData}</td>
+                  )}
+                </tr>
+              </>
             )}
           </tbody>
         )}

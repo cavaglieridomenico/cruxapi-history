@@ -34,7 +34,6 @@ const SingleUrlTable = ({
   responseUrl,
   errorCode,
   errorMessage,
-  errorStatus,
 }: SingleUrlTableProp) => {
   return (
     <div className={`single-url-table-wrapper`}>
@@ -114,6 +113,26 @@ const SingleUrlTable = ({
                 type={metrics}
                 isOnlyOneValue
               />
+            )}
+            {metrics === "lcp+ttfb" && (
+              <>
+                <PercentileRow
+                  percentileList={lcpData}
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                  type={"lcp"}
+                  isOnlyOneValue
+                />
+                <PercentileRow
+                  percentileList={ttfbData}
+                  errorStatus={
+                    errorCode ? `${errorCode} - ${errorMessage}` : ""
+                  }
+                  type={"ttfb"}
+                  isOnlyOneValue
+                />
+              </>
             )}
           </tbody>
         )}
