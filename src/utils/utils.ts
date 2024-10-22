@@ -1,18 +1,16 @@
-import {
-  urlListBkdePdp,
-  urlListWpfrPdp,
-  urlListWpitPdp,
-  urlListWpplPdp,
-  urlListHpit,
-  urlListHpuk,
-  urlListWpitPlp,
-  urlListWpplPlp,
-  urlListBkdePlp,
-  urlListHpukPlp,
-  urlListWpfrPlp,
-  urlListHpitPlp,
-  urlListHomepages,
-} from "./urlList";
+import { urlListHomepages } from "./urlLists/urlListHomepages";
+import { urlListWpitPlp } from "./urlLists/urlListWpitPlp";
+import { urlListWpitPdp } from "./urlLists/urlListWpitPdp";
+import { urlListWpplPlp } from "./urlLists/urlListWpplPlp";
+import { urlListWpplPdp } from "./urlList";
+import { urlListHpitPlp } from "./urlLists/urlListHpitPlp";
+import { urlListHpitPdp } from "./urlLists/urlListHpitPdp";
+import { urlListHpukPlp } from "./urlLists/urlListHpukPlp";
+import { urlListHpukPdp } from "./urlLists/urlListHpukPdp";
+import { urlListWpfrPlp } from "./urlLists/urlListWpfrPlp";
+import { urlListWpfrPdp } from "./urlLists/urlListWpfrPdp";
+import { urlListBkdePlp } from "./urlLists/urlListBkdePlp";
+import { urlListBkdePdp } from "./urlLists/urlListBkdePdp";
 
 export const getMarketList = (market: string) => {
   switch (market) {
@@ -27,9 +25,9 @@ export const getMarketList = (market: string) => {
     case "bk-de-pdp":
       return urlListBkdePdp;
     case "hp-it-pdp":
-      return urlListHpit;
+      return urlListHpitPdp;
     case "hp-uk-pdp":
-      return urlListHpuk;
+      return urlListHpukPdp;
     case "wp-it-plp":
       return urlListWpitPlp;
     case "wp-pl-plp":
