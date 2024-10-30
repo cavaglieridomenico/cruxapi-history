@@ -559,6 +559,11 @@ export const useFetchData = () => {
 
   useEffect(() => {
     if (!noMoreCalls) return;
+    window.localStorage.setItem("allUrlsMobile", JSON.stringify(allUrlsMobile));
+    window.localStorage.setItem(
+      "allUrlsDesktop",
+      JSON.stringify(allUrlsDesktop)
+    );
     setLoading(false);
   }, [noMoreCalls]);
 

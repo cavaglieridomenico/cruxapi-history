@@ -1,12 +1,23 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
-import SingleUrlTable from "../components/SingleUrlTable";
-import SingleUrlDaily from "../components/SingleUrlDaily";
-import { AllUrls, SingleUrl, useFetchData } from "../customHooks/useFetchData";
+import SingleUrlTable from "./SingleUrlTable";
+import SingleUrlDaily from "./SingleUrlDaily";
+import { AllUrls, SingleUrl } from "../customHooks/useFetchData";
 
-function Home() {
-  const { loading, currentUrl, timeoutCalls, allUrlsMobile, allUrlsDesktop } =
-    useFetchData();
+type DailyAndHistoryTableProps = {
+  loading: boolean;
+  allUrlsMobile: AllUrls;
+  allUrlsDesktop: AllUrls;
+  timeoutCalls: number;
+  currentUrl: string;
+};
 
+function DailyAndHistoryTable({
+  loading,
+  currentUrl,
+  timeoutCalls,
+  allUrlsMobile,
+  allUrlsDesktop,
+}: DailyAndHistoryTableProps) {
   const [render, setRender] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
@@ -468,4 +479,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default DailyAndHistoryTable;
