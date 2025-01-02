@@ -2,7 +2,7 @@ import { urlListHomepages } from "./urlLists/urlListHomepages";
 import { urlListWpitPlp } from "./urlLists/urlListWpitPlp";
 import { urlListWpitPdp } from "./urlLists/urlListWpitPdp";
 import { urlListWpplPlp } from "./urlLists/urlListWpplPlp";
-import { urlListWpplPdp } from "./urlList";
+import { urlListWpplPdp } from "./urlLists/urlListWpplPdp";
 import { urlListHpitPlp } from "./urlLists/urlListHpitPlp";
 import { urlListHpitPdp } from "./urlLists/urlListHpitPdp";
 import { urlListHpukPlp } from "./urlLists/urlListHpukPlp";
@@ -16,39 +16,31 @@ export const getMarketList = (market: string) => {
   switch (market) {
     case "homepages":
       return urlListHomepages;
-    case "wp-it-pdp":
+    case "wpitPdp":
       return urlListWpitPdp;
-    case "wp-pl-pdp":
+    case "wpplPdp":
       return urlListWpplPdp;
-    case "wp-fr-pdp":
+    case "wpfrPdp":
       return urlListWpfrPdp;
-    case "bk-de-pdp":
+    case "bkdePdp":
       return urlListBkdePdp;
-    case "hp-it-pdp":
+    case "hpitPdp":
       return urlListHpitPdp;
-    case "hp-uk-pdp":
+    case "hpukPdp":
       return urlListHpukPdp;
-    case "wp-it-plp":
+    case "wpitPlp":
       return urlListWpitPlp;
-    case "wp-pl-plp":
+    case "wpplPlp":
       return urlListWpplPlp;
-    case "wp-fr-plp":
+    case "wpfrPlp":
       return urlListWpfrPlp;
-    case "bk-de-plp":
+    case "bkdePlp":
       return urlListBkdePlp;
-    case "hp-it-plp":
+    case "hpitPlp":
       return urlListHpitPlp;
-    case "hp-uk-plp":
+    case "hpukPlp":
       return urlListHpukPlp;
     default:
       return [];
   }
-};
-
-export const getDisableTime = (selectItem: string): number => {
-  return selectItem.includes("home")
-    ? 2000
-    : selectItem.includes("plp")
-    ? 3000
-    : 6000;
 };

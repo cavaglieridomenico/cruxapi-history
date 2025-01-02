@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { getMarketList } from "../utils/utils";
 import fetchData from "../utils/fetchData";
+import type { CruxApi, CruxHistoryApi } from "../types/types";
 
 export type SingleUrl = {
   index: number;
   url: string;
-  dailyData: any;
-  historyData: any;
+  dailyData: CruxApi;
+  historyData: CruxHistoryApi;
 };
 export type AllUrls = {
   homepages: SingleUrl[];
@@ -24,37 +25,29 @@ export type AllUrls = {
   hpukPdp: SingleUrl[];
 };
 
+const initializeAllUrls = (): AllUrls => ({
+  homepages: [],
+  wpitPlp: [],
+  wpplPlp: [],
+  wpfrPlp: [],
+  bkdePlp: [],
+  hpitPlp: [],
+  hpukPlp: [],
+  wpitPdp: [],
+  wpplPdp: [],
+  wpfrPdp: [],
+  bkdePdp: [],
+  hpitPdp: [],
+  hpukPdp: [],
+});
+
 export const useFetchData = () => {
-  const [allUrlsMobile, setAllUrlsMobile] = useState<AllUrls>({
-    homepages: [],
-    wpitPlp: [],
-    wpplPlp: [],
-    wpfrPlp: [],
-    bkdePlp: [],
-    hpitPlp: [],
-    hpukPlp: [],
-    wpitPdp: [],
-    wpplPdp: [],
-    wpfrPdp: [],
-    bkdePdp: [],
-    hpitPdp: [],
-    hpukPdp: [],
-  });
-  const [allUrlsDesktop, setAllUrlsDesktop] = useState<AllUrls>({
-    homepages: [],
-    wpitPlp: [],
-    wpplPlp: [],
-    wpfrPlp: [],
-    bkdePlp: [],
-    hpitPlp: [],
-    hpukPlp: [],
-    wpitPdp: [],
-    wpplPdp: [],
-    wpfrPdp: [],
-    bkdePdp: [],
-    hpitPdp: [],
-    hpukPdp: [],
-  });
+  const [allUrlsMobile, setAllUrlsMobile] = useState<AllUrls>(
+    initializeAllUrls()
+  );
+  const [allUrlsDesktop, setAllUrlsDesktop] = useState<AllUrls>(
+    initializeAllUrls()
+  );
   const [noMoreCalls, setNoMoreCalls] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentUrl, setCurrentUrl] = useState("");
@@ -74,40 +67,10 @@ export const useFetchData = () => {
     import.meta.env.VITE_API_KEY_2
   }`;
 
-  // useEffect(() => {
-  //   getMarketList("wp-it-plp").forEach(async (url, index) => {
-  //     const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-  //     const historyData = await fetchData(url, "PHONE", urlCruxHistory);
-  //     setCurrentUrl(`MOBILE - ${url}`);
-  //     setAllUrlsMobile((prevState) => {
-  //       const singleUrl = {
-  //         index: index + 1,
-  //         url: url,
-  //         dailyData,
-  //         historyData,
-  //       };
-  //       prevState?.wpitPlp?.push(singleUrl);
-  //       return prevState;
-  //     });
-  //   });
-  //   getMarketList("wp-it-plp").forEach(async (url, index) => {
-  //     const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-  //     const historyData = await fetchData(url, "DESKTOP", urlCruxHistory);
-  //     setCurrentUrl(`DESKTOP - ${url}`);
-  //     setAllUrlsDesktop((prevState) => {
-  //       const singleUrl = {
-  //         index: index + 1,
-  //         url: url,
-  //         dailyData,
-  //         historyData,
-  //       };
-  //       prevState?.wpitPlp?.push(singleUrl);
-  //       return prevState;
-  //     });
-  //     index === getMarketList("homepages").length - 1 &&
-  //       setTimeout(() => setNoMoreCalls(true), 2000);
-  //   });
-  // }, []);
+  const waitToLimitCallsTo150PerMinute = (timeInSeconds: number) => {
+    setTimeoutCalls(timeInSeconds);
+    return new Promise((resolve) => setTimeout(resolve, timeInSeconds * 1000));
+  };
 
   useEffect(() => {
     let timeoutCallsInterval = setInterval(() => {
@@ -116,446 +79,145 @@ export const useFetchData = () => {
     }, 1000);
     return () => clearInterval(timeoutCallsInterval);
   }, [timeoutCalls]);
-  useEffect(() => {
-    //CALLS FOR HOME/PLP MOBILE
-    getMarketList("homepages").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.homepages?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("wp-it-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.wpitPlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("wp-pl-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.wpplPlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("wp-fr-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.wpfrPlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("bk-de-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.bkdePlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("hp-it-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.hpitPlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    getMarketList("hp-uk-plp").forEach(async (url, index) => {
-      const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-      const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-      setCurrentUrl(`MOBILE - ${url}`);
-      setAllUrlsMobile((prevState) => {
-        const singleUrl = {
-          index: index + 1,
-          url: url,
-          dailyData,
-          historyData,
-        };
-        prevState?.hpukPlp?.push(singleUrl);
-        return prevState;
-      });
-    });
-    // CALLS FOR HOME/PLP DESKTOP
-    setTimeoutCalls(60);
-    setTimeout(() => {
-      getMarketList("homepages").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.homepages?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("wp-it-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpitPlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("wp-pl-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpplPlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("wp-fr-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpfrPlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("bk-de-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.bkdePlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("hp-it-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpitPlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      getMarketList("hp-uk-plp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpukPlp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 60000);
-    //CALLS FOR PDP MOBILE
-    setTimeout(() => {
-      getMarketList("wp-it-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpitPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 120000);
-    setTimeout(() => {
-      getMarketList("wp-pl-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpplPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 180000);
-    setTimeout(() => {
-      getMarketList("wp-fr-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpfrPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 240000);
-    setTimeout(() => {
-      getMarketList("bk-de-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.bkdePdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 300000);
-    setTimeout(() => {
-      getMarketList("hp-it-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpitPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 360000);
-    setTimeout(() => {
-      getMarketList("hp-uk-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "PHONE", urlCruxDaily);
-        const historyData = await fetchData(url, "PHONE", urlCruxHistory2);
-        setCurrentUrl(`MOBILE - ${url}`);
-        setAllUrlsMobile((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpukPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 420000);
-    // CALLS FOR PDP DESKTOP
-    setTimeout(() => {
-      getMarketList("wp-it-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpitPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 480000);
-    setTimeout(() => {
-      getMarketList("wp-pl-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpplPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 540000);
-    setTimeout(() => {
-      getMarketList("wp-fr-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.wpfrPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 600000);
-    setTimeout(() => {
-      getMarketList("bk-de-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.bkdePdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 660000);
-    setTimeout(() => {
-      getMarketList("hp-it-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpitPdp?.push(singleUrl);
-          return prevState;
-        });
-      });
-      setTimeoutCalls(60);
-    }, 720000);
-    setTimeout(() => {
-      getMarketList("hp-uk-pdp").forEach(async (url, index) => {
-        const dailyData = await fetchData(url, "DESKTOP", urlCruxDaily);
-        const historyData = await fetchData(url, "DESKTOP", urlCruxHistory2);
-        setCurrentUrl(`DESKTOP - ${url}`);
-        setAllUrlsDesktop((prevState) => {
-          const singleUrl = {
-            index: index + 1,
-            url: url,
-            dailyData,
-            historyData,
-          };
-          prevState?.hpukPdp?.push(singleUrl);
-          return prevState;
-        });
-        index === getMarketList("hp-uk-pdp").length - 1 &&
-          setTimeout(() => setNoMoreCalls(true), 2000);
-      });
-    }, 780000);
-  }, []);
 
-  // index === getMarketList("wp-it-plp").length - 1 &&
-  //       setTimeout(() => setNoMoreCalls(true), 2000);
+  useEffect(() => {
+    const fetchMarketData = async (
+      market: keyof AllUrls,
+      display: "mobile" | "desktop"
+    ) => {
+      try {
+        await Promise.all(
+          getMarketList(market).map(async (url, index) => {
+            const dailyData = await fetchData(
+              url,
+              display === "mobile" ? "PHONE" : "DESKTOP",
+              urlCruxDaily
+            );
+            const historyData = await fetchData(
+              url,
+              display === "mobile" ? "PHONE" : "DESKTOP",
+              urlCruxHistory2
+            );
+
+            setCurrentUrl(
+              `${display === "mobile" ? "MOBILE" : "DESKTOP"} - ${url}`
+            );
+
+            display === "mobile"
+              ? setAllUrlsMobile((prevState) => ({
+                  ...prevState,
+                  [market]: [
+                    ...prevState[market],
+                    {
+                      index: index + 1,
+                      url,
+                      dailyData,
+                      historyData,
+                    },
+                  ],
+                }))
+              : setAllUrlsDesktop((prevState) => ({
+                  ...prevState,
+                  [market]: [
+                    ...prevState[market],
+                    {
+                      index: index + 1,
+                      url,
+                      dailyData,
+                      historyData,
+                    },
+                  ],
+                }));
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching market data:", error);
+      }
+    };
+
+    const fetchAllUrls = async () => {
+      //CALLS FOR HOME/PLP MOBILE
+      fetchMarketData("homepages", "mobile");
+      fetchMarketData("wpitPlp", "mobile");
+      fetchMarketData("wpplPlp", "mobile");
+      fetchMarketData("wpfrPlp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("bkdePlp", "mobile");
+      fetchMarketData("hpitPlp", "mobile");
+      fetchMarketData("hpukPlp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      // CALLS FOR HOME/PLP DESKTOP
+      fetchMarketData("homepages", "desktop");
+      fetchMarketData("wpitPlp", "desktop");
+      fetchMarketData("wpplPlp", "desktop");
+      fetchMarketData("wpfrPlp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("bkdePlp", "desktop");
+      fetchMarketData("hpitPlp", "desktop");
+      fetchMarketData("hpukPlp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      //CALLS FOR PDP MOBILE
+      fetchMarketData("wpitPdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("wpplPdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("wpfrPdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("bkdePdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("hpitPdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("hpukPdp", "mobile");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      // CALLS FOR PDP DESKTOP
+      fetchMarketData("wpitPdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("wpplPdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("wpfrPdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("bkdePdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("hpitPdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(60);
+
+      fetchMarketData("hpukPdp", "desktop");
+
+      await waitToLimitCallsTo150PerMinute(20);
+      setNoMoreCalls(true);
+    };
+
+    fetchAllUrls();
+  }, []);
 
   useEffect(() => {
     if (!noMoreCalls) return;

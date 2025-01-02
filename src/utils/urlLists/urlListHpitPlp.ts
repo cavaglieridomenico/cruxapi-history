@@ -1,6 +1,4 @@
 export const urlListHpitPlp = [
-  "https://www.hotpoint.it/asciugatrice-a-pompa-di-calore-hotpoint-a-libera-installazione-8-0-kg-nt-m11-82k-it-869991658170/p",
-  "https://www.hotpoint.it/cucina-elettrica-a-libera-installazione-hotpoint-60-cm-hs68iq8chxe-869991640250/p",
   "https://www.hotpoint.it/elettrodomestici/cottura",
   "https://www.hotpoint.it/elettrodomestici/cottura/cappe",
   "https://www.hotpoint.it/elettrodomestici/cottura/cucine",
