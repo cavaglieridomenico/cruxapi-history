@@ -2,7 +2,7 @@ import { urlListHomepages } from "./urlLists/urlListHomepages";
 import { urlListWpitPlp } from "./urlLists/urlListWpitPlp";
 import { urlListWpitPdp } from "./urlLists/urlListWpitPdp";
 import { urlListWpplPlp } from "./urlLists/urlListWpplPlp";
-import { urlListWpplPdp } from "./urlList";
+import { urlListWpplPdp } from "./urlLists/urlListWpplPdp";
 import { urlListHpitPlp } from "./urlLists/urlListHpitPlp";
 import { urlListHpitPdp } from "./urlLists/urlListHpitPdp";
 import { urlListHpukPlp } from "./urlLists/urlListHpukPlp";

@@ -1,4 +1,6 @@
 export const urlListHpitPdp = [
+  "https://www.hotpoint.it/asciugatrice-a-pompa-di-calore-hotpoint-a-libera-installazione-8-0-kg-nt-m11-82k-it-869991658170/p",
+  "https://www.hotpoint.it/cucina-elettrica-a-libera-installazione-hotpoint-60-cm-hs68iq8chxe-869991640250/p",
   "https://www.hotpoint.it/forno-elettrico-incasso-hotpoint-autopulente-fit-804-h-av-ha-859991537620/p",
   "https://www.hotpoint.it/forno-elettrico-incasso-hotpoint-colore-inox-autopulente-fa2-530-h-ix-ha-859991001340/p",
   "https://www.hotpoint.it/forno-elettrico-incasso-hotpoint-colore-inox-autopulente-fa2-840-p-ix-ha-859991001230/p",
